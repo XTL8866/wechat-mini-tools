@@ -1,0 +1,281 @@
+.page {
+  padding: 24rpx 32rpx 60rpx;
+}
+
+/* ---------- 顶部 ---------- */
+.hero {
+  padding-top: 16rpx;
+}
+
+.h1 {
+  font-size: 52rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+  line-height: 1.2;
+}
+
+.sub {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #86868E;
+  line-height: 1.5;
+}
+
+/* ---------- 原文输入 ---------- */
+.field {
+  margin-top: 40rpx;
+  background: #F6F6F8;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx 18rpx;
+}
+
+.field-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field-label {
+  font-size: 24rpx;
+  color: #86868E;
+}
+
+.field-count {
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.ta {
+  margin-top: 14rpx;
+  width: 100%;
+  min-height: 168rpx;
+  font-size: 30rpx;
+  line-height: 1.62;
+  color: #101014;
+}
+
+.ph {
+  color: #B4B4BC;
+  font-size: 29rpx;
+}
+
+.field-actions {
+  margin-top: 10rpx;
+  display: flex;
+  justify-content: space-between;
+}
+
+.link {
+  font-size: 23rpx;
+  color: #FF4D3D;
+}
+
+/* ---------- 区块 ---------- */
+.section {
+  margin-top: 36rpx;
+}
+
+.section-label {
+  font-size: 24rpx;
+  color: #86868E;
+  margin-bottom: 16rpx;
+}
+
+.hint {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+/* 改法 chip */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chip {
+  margin: 0 14rpx 14rpx 0;
+  padding: 14rpx 28rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #E6E6EA;
+  font-size: 26rpx;
+  color: #3A3A42;
+}
+
+.chip.on {
+  background: #101014;
+  border-color: #101014;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------- 主按钮 ---------- */
+.btn-primary {
+  margin-top: 40rpx;
+  height: 100rpx;
+  border-radius: 22rpx;
+  background: #FF4D3D;
+  color: #FFFFFF;
+  font-size: 31rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1rpx;
+}
+
+.btn-primary.dim {
+  opacity: 0.55;
+}
+
+/* ---------- 结果 ---------- */
+.result-head {
+  margin-top: 52rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.result-title {
+  font-size: 26rpx;
+  color: #86868E;
+}
+
+.result-count {
+  font-size: 23rpx;
+  color: #B4B4BC;
+}
+
+.out {
+  margin-top: 18rpx;
+  font-size: 31rpx;
+  line-height: 1.72;
+  color: #101014;
+  letter-spacing: 0.2rpx;
+}
+
+.item-bottom {
+  margin-top: 20rpx;
+  padding-bottom: 22rpx;
+  border-bottom: 2rpx solid #F1F1F4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+}
+
+.tag {
+  font-size: 20rpx;
+  color: #86868E;
+  background: #F4F4F6;
+  border-radius: 6rpx;
+  padding: 4rpx 12rpx;
+  margin-right: 12rpx;
+}
+
+.len {
+  font-size: 20rpx;
+  color: #C6C6CE;
+}
+
+.copy {
+  font-size: 24rpx;
+  color: #FF4D3D;
+  padding: 6rpx 4rpx 6rpx 24rpx;
+}
+
+/* 改动清单 */
+.changes {
+  margin-top: 24rpx;
+}
+
+.changes-label {
+  font-size: 22rpx;
+  color: #B4B4BC;
+  margin-bottom: 14rpx;
+}
+
+.chg {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 2rpx solid #F7F7F9;
+  font-size: 24rpx;
+}
+
+.chg-from {
+  color: #86868E;
+  text-decoration: line-through;
+  max-width: 300rpx;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.chg-arrow {
+  margin: 0 16rpx;
+  color: #C6C6CE;
+  font-size: 20rpx;
+}
+
+.chg-to {
+  color: #101014;
+}
+
+/* ---------- 解锁 ---------- */
+.unlock {
+  margin-top: 34rpx;
+  background: #FFF3F1;
+  border-radius: 22rpx;
+  padding: 26rpx 28rpx;
+}
+
+.unlock-main {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #D93A2B;
+}
+
+.unlock-sub {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: #C4746A;
+}
+
+.unlocked-tip {
+  margin-top: 34rpx;
+  font-size: 23rpx;
+  color: #B4B4BC;
+  text-align: center;
+}
+
+/* ---------- 空态 ---------- */
+.empty {
+  margin-top: 88rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-line {
+  width: 56rpx;
+  height: 2rpx;
+  background: #E6E6EA;
+}
+
+.empty-text {
+  margin-top: 22rpx;
+  font-size: 24rpx;
+  color: #C6C6CE;
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  margin-top: 64rpx;
+  text-align: center;
+  font-size: 21rpx;
+  color: #C6C6CE;
+}

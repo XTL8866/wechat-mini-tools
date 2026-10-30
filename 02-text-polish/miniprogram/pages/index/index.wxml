@@ -1,0 +1,96 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">文本润色</view>
+    <view class="sub">一段话，四种改法：精简、扩写、转书面、降重</view>
+  </view>
+
+  <!-- 原文 -->
+  <view class="field">
+    <view class="field-top">
+      <text class="field-label">原文</text>
+      <text class="field-count">{{textLen}}/{{maxLen}}</text>
+    </view>
+    <textarea
+      class="ta"
+      value="{{text}}"
+      placeholder="贴一段要改的文字，最多 1000 字"
+      placeholder-class="ph"
+      maxlength="{{maxLen}}"
+      bindinput="onTextInput"
+      auto-height
+      show-confirm-bar="{{false}}"
+      cursor-spacing="24"
+    />
+    <view class="field-actions">
+      <text class="link" bindtap="onSample">用一段示例</text>
+      <text class="link" wx:if="{{textLen}}" bindtap="onClear">清空</text>
+    </view>
+  </view>
+
+  <!-- 改法 -->
+  <view class="section">
+    <view class="section-label">改法</view>
+    <view class="chips">
+      <view
+        wx:for="{{modes}}"
+        wx:key="id"
+        class="chip {{mode === item.id ? 'on' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onMode"
+      >{{item.name}}</view>
+    </view>
+    <view class="hint">{{modeDesc}}</view>
+  </view>
+
+  <!-- 主按钮 -->
+  <view class="btn-primary {{generating ? 'dim' : ''}}" bindtap="onRun">
+    {{generating ? '处理中…' : (result ? '再跑一次' : '开始润色')}}
+  </view>
+
+  <!-- 结果 -->
+  <block wx:if="{{result}}">
+    <view class="result-head">
+      <text class="result-title">改后</text>
+      <text class="result-count">{{deltaText}}</text>
+    </view>
+
+    <view class="out">{{result.text}}</view>
+
+    <view class="item-bottom">
+      <view class="meta">
+        <text class="tag">{{result.modeName}}</text>
+        <text class="len">{{result.changeCount}} 处改动</text>
+      </view>
+      <view class="copy" bindtap="onCopy">复制</view>
+    </view>
+
+    <view class="changes" wx:if="{{result.changes.length}}">
+      <view class="changes-label">改了这些</view>
+      <view class="chg" wx:for="{{result.changes}}" wx:key="index">
+        <text class="chg-from">{{item.from}}</text>
+        <text class="chg-arrow">→</text>
+        <text class="chg-to">{{item.to ? item.to : '删掉'}}</text>
+      </view>
+    </view>
+
+    <!-- 解锁不限次 -->
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+      <view class="unlock-main">解锁不限次</view>
+      <view class="unlock-sub">免费 2 次之后，看一段激励视频即可无限改</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，不限次数</view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty" wx:else>
+    <view class="empty-line"></view>
+    <view class="empty-text">贴上文字，选一种改法</view>
+  </view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">本地处理，不上传任何文字</view>
+</view>
