@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>标题生成器 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 {
+    font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2;
+  }
+  .sub { margin-top: 6px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 输入 */
+  .field {
+    margin-top: 20px; background: #F6F6F8; border-radius: 12.5px;
+    padding: 12.5px 14.5px 13.5px;
+  }
+  .field-top { display: flex; justify-content: space-between; align-items: center; }
+  .field-label { font-size: 12.5px; color: #86868E; }
+  .field-count { font-size: 11.5px; color: #B4B4BC; }
+  .input-row { margin-top: 7px; display: flex; align-items: center; height: 25px; }
+  .input-text {
+    font-size: 17.7px; font-weight: 600; line-height: 25px;
+    white-space: nowrap; overflow: hidden;
+  }
+  .ph { color: #B4B4BC; font-weight: 400; font-size: 15.5px; }
+  .caret {
+    display: none; width: 1.5px; height: 20px; background: #FF4D3D;
+    margin-left: 1px; animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* 区块 */
+  .section { margin-top: 20px; }
+  .section-label { font-size: 12.5px; color: #86868E; margin-bottom: 8px; }
+  .hint { margin-top: 7px; font-size: 11.5px; color: #B4B4BC; }
+
+  .seg {
+    display: flex; background: #F1F1F4; border-radius: 999px; padding: 3px;
+  }
+  .seg-item {
+    flex: 1; text-align: center; font-size: 14px; color: #6C6C76;
+    padding: 8px 0; border-radius: 999px; transition: none;
+  }
+  .seg-item.on {
+    background: #FFFFFF; color: #101014; font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  .chips { display: flex; }
+  .chip {
+    margin-right: 8px; padding: 7px 17px; border-radius: 999px;
+    border: 1px solid #E6E6EA; font-size: 14px; color: #3A3A42;
+  }
+  .chip.on { background: #101014; border-color: #101014; color: #FFFFFF; font-weight: 600; }
+
+  /* 主按钮 */
+  .btn-primary {
+    margin-top: 24px; height: 52px; border-radius: 11.5px; background: #FF4D3D;
+    color: #FFFFFF; font-size: 16px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; letter-spacing: 0.5px;
+  }
+  .btn-primary.dim { opacity: 0.55; }
+
+  /* 结果 */
+  .result-head {
+    margin-top: 28px; display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .result-title { font-size: 13.5px; color: #86868E; }
+  .result-count { font-size: 12.5px; color: #B4B4BC; }
+
+  .list { margin-top: 4px; }
+  .item { padding: 14px 0; border-bottom: 1px solid #F1F1F4; }
+  .item-top { display: flex; }
+  .idx {
+    width: 22px; flex-shrink: 0; font-size: 12.5px; color: #C6C6CE;
+    font-weight: 600; line-height: 1.75; font-variant-numeric: tabular-nums;
+  }
+  .item-text { flex: 1; font-size: 16.6px; line-height: 1.62; font-weight: 500; }
+  .item-bottom {
+    margin-top: 9px; padding-left: 22px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .meta { display: flex; align-items: center; }
+  .tag {
+    font-size: 10.4px; color: #86868E; background: #F4F4F6;
+    border-radius: 3px; padding: 2px 6px; margin-right: 6px;
+  }
+  .tag.warn { color: #B26A00; background: #FFF4E0; }
+  .len { font-size: 10.4px; color: #C6C6CE; }
+  .copy { font-size: 12.5px; color: #FF4D3D; padding: 3px 2px 3px 12px; }
+  .copy.done { color: #B4B4BC; }
+
+  /* 解锁 */
+  .unlock { margin-top: 18px; background: #FFF3F1; border-radius: 11.5px; padding: 13px 14.5px; }
+  .unlock-main { font-size: 15px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 12px; color: #C4746A; }
+  .unlocked-tip { margin-top: 18px; font-size: 12px; color: #B4B4BC; text-align: center; }
+
+  /* 空态 */
+  .empty { margin-top: 44px; display: flex; flex-direction: column; align-items: center; }
+  .empty-line { width: 28px; height: 1px; background: #E6E6EA; }
+  .empty-text { margin-top: 11px; font-size: 12.5px; color: #C6C6CE; }
+
+  .footer { margin-top: 32px; text-align: center; font-size: 11px; color: #C6C6CE; }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    transition: none; white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">标题生成器</div>
+    <div class="sub">输入产品，直接出能用的抖音 / 小红书标题</div>
+  </div>
+
+  <div class="field">
+    <div class="field-top">
+      <span class="field-label">产品 / 主题</span>
+      <span class="field-count" id="topicLen">0/30</span>
+    </div>
+    <div class="input-row" id="inputRow">
+      <span class="input-text ph" id="topicText">比如：保温杯、无线耳机、宠物湿粮</span><span class="caret" id="caret"></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">发布平台</div>
+    <div class="seg" id="seg">
+      <div class="seg-item on" data-id="douyin">抖音</div>
+      <div class="seg-item" data-id="xhs">小红书</div>
+    </div>
+    <div class="hint" id="platformHint">口语 / 短 / 有冲突</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">标题风格</div>
+    <div class="chips" id="chips">
+      <div class="chip on" data-id="viral">爆款</div>
+      <div class="chip" data-id="heart">走心</div>
+      <div class="chip" data-id="sell">带货</div>
+    </div>
+    <div class="hint" id="styleHint">强钩子，前三字抓人</div>
+  </div>
+
+  <div class="btn-primary" id="btn">生成 3 条标题</div>
+
+  <div id="resultWrap" class="hidden">
+    <div class="result-head">
+      <span class="result-title">生成结果</span>
+      <span class="result-count" id="resultCount">3 条</span>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="unlock" id="unlock">
+      <div class="unlock-main">解锁批量生成</div>
+      <div class="unlock-sub">看一段激励视频，一次出 15 条</div>
+    </div>
+    <div class="unlocked-tip hidden" id="unlockedTip">已解锁，一次最多 15 条</div>
+  </div>
+
+  <div class="empty" id="empty">
+    <div class="empty-line"></div>
+    <div class="empty-text">填一个词，按下生成</div>
+  </div>
+
+  <div class="footer">本地生成，不上传任何输入内容</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/titles.js"></script>
+<script>
+(function () {
+  var S = {
+    topic: '',
+    platform: 'douyin',
+    style: 'viral',
+    list: [],
+    unlocked: false,
+    used: []
+  };
+
+  var el = {
+    topicText: document.getElementById('topicText'),
+    topicLen: document.getElementById('topicLen'),
+    seg: document.getElementById('seg'),
+    chips: document.getElementById('chips'),
+    platformHint: document.getElementById('platformHint'),
+    styleHint: document.getElementById('styleHint'),
+    btn: document.getElementById('btn'),
+    resultWrap: document.getElementById('resultWrap'),
+    resultCount: document.getElementById('resultCount'),
+    list: document.getElementById('list'),
+    unlock: document.getElementById('unlock'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    empty: document.getElementById('empty'),
+    toast: document.getElementById('toast')
+  };
+
+  var HINTS = {
+    douyin: '口语 / 短 / 有冲突',
+    xhs: '笔记感 / 可收藏',
+    viral: '强钩子，前三字抓人',
+    heart: '情绪共鸣，慢一点',
+    sell: '卖点前置，临门一脚'
+  };
+
+  var toastTimer = null;
+
+  function render() {
+    // 输入
+    if (S.topic) {
+      el.topicText.textContent = S.topic;
+      el.topicText.className = 'input-text';
+    } else {
+      el.topicText.textContent = '比如：保温杯、无线耳机、宠物湿粮';
+      el.topicText.className = 'input-text ph';
+    }
+    el.topicLen.textContent = S.topic.length + '/30';
+
+    // 平台 / 风格
+    [].forEach.call(el.seg.children, function (n) {
+      n.className = 'seg-item' + (n.dataset.id === S.platform ? ' on' : '');
+    });
+    [].forEach.call(el.chips.children, function (n) {
+      n.className = 'chip' + (n.dataset.id === S.style ? ' on' : '');
+    });
+    el.platformHint.textContent = HINTS[S.platform];
+    el.styleHint.textContent = HINTS[S.style];
+
+    // 按钮
+    el.btn.textContent = S.list.length ? '换一批' : '生成 3 条标题';
+
+    // 列表
+    if (S.list.length) {
+      el.resultWrap.classList.remove('hidden');
+      el.empty.classList.add('hidden');
+      el.resultCount.textContent = S.list.length + ' 条';
+
+      var html = '';
+      S.list.forEach(function (it, i) {
+        html += '<div class="item">' +
+          '<div class="item-top"><span class="idx">' + (i + 1) + '</span>' +
+          '<span class="item-text">' + esc(it.text) + '</span></div>' +
+          '<div class="item-bottom"><span class="meta">' +
+          '<span class="tag">' + esc(it.styleName) + '</span>' +
+          (it.wide ? '<span class="tag warn">偏长</span>' : '') +
+          '<span class="len">' + it.length + ' 字</span></span>' +
+          '<span class="copy" data-i="' + i + '">复制</span></div>' +
+          '</div>';
+      });
+      el.list.innerHTML = html;
+
+      el.unlock.classList.toggle('hidden', S.unlocked);
+      el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+    } else {
+      el.resultWrap.classList.add('hidden');
+      el.empty.classList.remove('hidden');
+    }
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
+    });
+  }
+
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      el.toast.classList.remove('show');
+    }, 1600);
+  }
+
+  function gen(count, append) {
+    var r = TitleGen.generate({
+      topic: S.topic,
+      platform: S.platform,
+      style: S.style,
+      count: count,
+      exclude: S.used
+    });
+    if (!r.ok) { toast(r.message); return false; }
+    var fresh = r.list.map(function (x) {
+      return { text: x.text, styleName: x.styleName, length: x.length, wide: !!x.long };
+    });
+    S.used = r.usedIds;
+    S.list = append ? S.list.concat(fresh) : fresh;
+    render();
+    return true;
+  }
+
+  // 截图脚本用的控制口
+  window.__ctl = {
+    reset: function () {
+      S = { topic: '', platform: 'douyin', style: 'viral', list: [], unlocked: false, used: [] };
+      render();
+    },
+    setTopic: function (t) { S.topic = t; render(); },
+    setPlatform: function (p) { S.platform = p; S.list = []; S.used = []; render(); },
+    setStyle: function (s) { S.style = s; S.list = []; S.used = []; render(); },
+    generate: function (n) { return gen(n || 3, false); },
+    unlock: function () {
+      S.unlocked = true;
+      // 追加到 15 条，而不是再加 15 条
+      var need = Math.max(0, 15 - S.list.length);
+      if (need > 0) gen(need, true);
+      else render();
+    },
+    copy: function (i) {
+      var nodes = el.list.querySelectorAll('.copy');
+      if (nodes[i]) nodes[i].classList.add('done');
+      toast('已复制');
+    },
+    toast: toast,
+    hideToast: function () { el.toast.classList.remove('show'); },
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    focus: function (on) { document.getElementById('caret').style.display = on ? 'inline-block' : 'none'; },
+    state: function () { return S; }
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>
