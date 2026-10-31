@@ -1,0 +1,137 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">头像文字贴纸</view>
+    <view class="sub">选一张图，打一行字，直接存成能用的头像</view>
+  </view>
+
+  <!-- 画布 -->
+  <view class="stage" style="height:{{stageH}}px">
+    <canvas type="2d" id="cv" class="cv" style="width:{{stageW}}px;height:{{stageH}}px"></canvas>
+    <view class="stage-empty" wx:if="{{!hasImage}}" bindtap="onPick">
+      <view class="plus">＋</view>
+      <view class="stage-empty-text">选一张图片</view>
+    </view>
+  </view>
+
+  <view class="stage-actions">
+    <text class="link" bindtap="onPick">换一张</text>
+    <text class="link" bindtap="onSample">用示例图</text>
+    <text class="link" wx:if="{{result}}">已生成 {{resultW}} × {{resultH}}</text>
+  </view>
+
+  <!-- 文字 -->
+  <view class="field">
+    <view class="field-top">
+      <text class="field-label">贴纸文字</text>
+      <text class="field-count">{{textLen}}/{{maxChars}}</text>
+    </view>
+    <input
+      class="ipt"
+      value="{{text}}"
+      maxlength="{{maxChars}}"
+      placeholder="比如 陈、中秋快乐"
+      placeholder-class="ph"
+      bindinput="onTextInput"
+      confirm-type="done"
+    />
+    <view class="field-actions">
+      <text class="link" bindtap="onSampleText">试试「陈」</text>
+      <text class="link" wx:if="{{textLen}}" bindtap="onClearText">清空</text>
+    </view>
+  </view>
+
+  <!-- 字体 -->
+  <view class="section">
+    <view class="section-label">字体</view>
+    <view class="chips">
+      <view
+        wx:for="{{fonts}}"
+        wx:key="id"
+        class="chip {{fontId === item.id ? 'on' : ''}}"
+        style="font-family:{{item.family}};font-weight:{{item.weight}}"
+        data-id="{{item.id}}"
+        bindtap="onFont"
+      >{{item.name}}</view>
+    </view>
+    <view class="hint">{{fontDesc}}</view>
+  </view>
+
+  <!-- 颜色 -->
+  <view class="section">
+    <view class="section-label">颜色</view>
+    <view class="sw-row">
+      <view
+        wx:for="{{colors}}"
+        wx:key="id"
+        class="sw {{color === item.value ? 'on' : ''}}"
+        style="background:{{item.value}}"
+        data-v="{{item.value}}"
+        bindtap="onColor"
+      ></view>
+      <view class="sw sw-auto {{color === 'auto' ? 'on' : ''}}" bindtap="onAuto">
+        <text class="sw-auto-t">自动</text>
+      </view>
+    </view>
+    <view class="hint">{{colorHint}}</view>
+  </view>
+
+  <!-- 位置 -->
+  <view class="section">
+    <view class="section-label">位置</view>
+    <view class="chips">
+      <view
+        wx:for="{{positions}}"
+        wx:key="id"
+        class="chip {{posId === item.id ? 'on' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onPos"
+      >{{item.name}}</view>
+    </view>
+  </view>
+
+  <!-- 描边 -->
+  <view class="switch-row">
+    <view class="switch-label">描边</view>
+    <view class="switch-sub">浅色图上压不住时打开</view>
+    <switch checked="{{outline}}" color="#FF4D3D" bindchange="onOutline" />
+  </view>
+
+  <!-- 主按钮 -->
+  <view class="btn-primary {{generating ? 'dim' : ''}}" bindtap="onGenerate">
+    {{generating ? '生成中…' : (result ? '重新生成' : '生成头像')}}
+  </view>
+
+  <!-- 结果 -->
+  <block wx:if="{{result}}">
+    <view class="result-head">
+      <text class="result-title">生成好了</text>
+      <text class="result-count">{{resultW}} × {{resultH}}</text>
+    </view>
+
+    <view class="meta-row">
+      <text class="tag">{{resultFont}}</text>
+      <text class="len">{{resultLines}} 行 · 字号 {{resultSize}}</text>
+    </view>
+
+    <view class="btn-save" bindtap="onSave">存到相册</view>
+
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+      <view class="unlock-main">解锁不限次</view>
+      <view class="unlock-sub">免费 2 次之后，看一段激励视频即可无限做</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，不限次数</view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty" wx:else>
+    <view class="empty-line"></view>
+    <view class="empty-text">选图 → 打字 → 生成</view>
+  </view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">图片只在本机处理，不上传</view>
+</view>
