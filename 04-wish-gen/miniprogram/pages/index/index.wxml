@@ -1,0 +1,104 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">祝福语生成</view>
+    <view class="sub">写上名字和场合，直接出能发的祝福语</view>
+  </view>
+
+  <!-- 输入 -->
+  <view class="field">
+    <view class="field-top">
+      <text class="field-label">祝福谁</text>
+      <text class="field-count">{{nameLen}}/12</text>
+    </view>
+    <input
+      class="input"
+      value="{{name}}"
+      placeholder="比如：陈曦、王经理、老周"
+      placeholder-class="ph"
+      maxlength="12"
+      confirm-type="done"
+      bindinput="onNameInput"
+      bindconfirm="onGenerate"
+    />
+  </view>
+
+  <!-- 场景 -->
+  <view class="section">
+    <view class="section-label">什么场合</view>
+    <view class="chips">
+      <view
+        wx:for="{{scenes}}"
+        wx:key="id"
+        class="chip {{scene === item.id ? 'on' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onScene"
+      >{{item.name}}</view>
+    </view>
+    <view class="hint">{{sceneHint}}</view>
+  </view>
+
+  <!-- 语气 -->
+  <view class="section">
+    <view class="section-label">什么口气</view>
+    <view class="seg">
+      <view
+        wx:for="{{tones}}"
+        wx:key="id"
+        class="seg-item {{tone === item.id ? 'on' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onTone"
+      >{{item.name}}</view>
+    </view>
+    <view class="hint">{{toneHint}}</view>
+  </view>
+
+  <!-- 主按钮 -->
+  <view class="btn-primary {{generating ? 'dim' : ''}}" bindtap="onGenerate">
+    {{generating ? '生成中…' : (list.length ? '换一批' : '生成 3 条祝福')}}
+  </view>
+
+  <!-- 结果 -->
+  <block wx:if="{{list.length}}">
+    <view class="result-head">
+      <text class="result-title">生成结果</text>
+      <text class="result-count">{{list.length}} 条</text>
+    </view>
+
+    <view class="list">
+      <view class="item" wx:for="{{list}}" wx:key="id">
+        <view class="item-top">
+          <text class="idx">{{index + 1}}</text>
+          <text class="item-text">{{item.text}}</text>
+        </view>
+        <view class="item-bottom">
+          <view class="meta">
+            <text class="tag">{{item.toneName}}</text>
+            <text class="tag warn" wx:if="{{item.wide}}">{{item.parts}} 条短信</text>
+            <text class="len">{{item.length}} 字</text>
+          </view>
+          <view class="copy" data-index="{{index}}" bindtap="onCopy">复制</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 解锁批量 -->
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+      <view class="unlock-main">解锁批量生成</view>
+      <view class="unlock-sub">看一段激励视频，一次出 15 条</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，一次最多 15 条</view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty" wx:else>
+    <view class="empty-line"></view>
+    <view class="empty-text">写上名字，选个场合，按下生成</view>
+  </view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">本地生成，不上传任何输入内容</view>
+</view>
