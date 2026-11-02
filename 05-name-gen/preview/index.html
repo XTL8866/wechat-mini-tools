@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>起名 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 姓 */
+  .field {
+    margin-top: 20px; background: #F6F6F8; border-radius: 12.5px;
+    padding: 12.5px 14.5px 13.5px;
+  }
+  .field.off { background: #FAFAFB; }
+  .field-top { display: flex; justify-content: space-between; align-items: center; }
+  .field-label { font-size: 12.5px; color: #86868E; }
+  .field-count { font-size: 11.5px; color: #B4B4BC; }
+  .input-row { margin-top: 7px; display: flex; align-items: center; height: 25px; }
+  .input-text {
+    font-size: 17.7px; font-weight: 600; line-height: 25px;
+    white-space: nowrap; overflow: hidden;
+  }
+  .ph { color: #B4B4BC; font-weight: 400; font-size: 15.5px; }
+  .caret {
+    display: none; width: 1.5px; height: 20px; background: #FF4D3D;
+    margin-left: 1px; animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* 区块 */
+  .section { margin-top: 20px; }
+  .section-label { font-size: 12.5px; color: #86868E; margin-bottom: 8px; }
+  .hint { margin-top: 7px; font-size: 11.5px; color: #B4B4BC; line-height: 1.5; }
+
+  .chips { display: flex; flex-wrap: wrap; }
+  .chip {
+    margin-right: 8px; margin-bottom: 8px; padding: 7px 17px; border-radius: 999px;
+    border: 1px solid #E6E6EA; font-size: 14px; color: #3A3A42;
+  }
+  .chip.on { background: #101014; border-color: #101014; color: #FFFFFF; font-weight: 600; }
+
+  /* 关键词 */
+  .kw-box { background: #F6F6F8; border-radius: 10.5px; padding: 11.5px 13.5px; }
+  .kw-text { font-size: 15.6px; font-weight: 500; line-height: 23px; min-height: 23px; }
+  .kw-text.ph { font-size: 15.5px; font-weight: 400; }
+
+  /* 主按钮 */
+  .btn-primary {
+    margin-top: 22px; height: 52px; border-radius: 11.5px; background: #FF4D3D;
+    color: #FFFFFF; font-size: 16px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; letter-spacing: 0.5px;
+  }
+  .btn-primary.dim { opacity: 0.55; }
+
+  /* 结果 */
+  .result-head {
+    margin-top: 28px; display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .result-title { font-size: 13.5px; color: #86868E; }
+  .result-count { font-size: 12.5px; color: #B4B4BC; }
+
+  .list { margin-top: 4px; }
+  .item { padding: 15px 0; border-bottom: 1px solid #F1F1F4; }
+  .item-top { display: flex; }
+  .idx {
+    width: 22px; flex-shrink: 0; font-size: 12.5px; color: #C6C6CE;
+    font-weight: 600; line-height: 1.4; font-variant-numeric: tabular-nums;
+  }
+  .item-body { flex: 1; min-width: 0; }
+  .name { font-size: 22.8px; font-weight: 700; letter-spacing: 2px; line-height: 1.3; }
+  .py { margin-top: 3px; font-size: 11.4px; color: #B4B4BC; letter-spacing: 0.5px; }
+  .mean { margin-top: 6px; font-size: 13px; line-height: 1.62; color: #5A5A64; }
+  .item-bottom {
+    margin-top: 8px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .meta { display: flex; align-items: center; }
+  .tag {
+    font-size: 10.4px; color: #86868E; background: #F4F4F6;
+    border-radius: 3px; padding: 2px 6px; margin-right: 6px;
+  }
+  .len { font-size: 10.4px; color: #C6C6CE; }
+  .copy { font-size: 12.5px; color: #FF4D3D; padding: 3px 2px 3px 12px; }
+  .copy.done { color: #B4B4BC; }
+
+  /* 解锁 */
+  .unlock { margin-top: 18px; background: #FFF3F1; border-radius: 11.5px; padding: 13px 14.5px; }
+  .unlock-main { font-size: 15px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 12px; color: #C4746A; }
+  .unlocked-tip { margin-top: 18px; font-size: 12px; color: #B4B4BC; text-align: center; }
+
+  /* 空态 */
+  .empty { margin-top: 44px; display: flex; flex-direction: column; align-items: center; }
+  .empty-line { width: 28px; height: 1px; background: #E6E6EA; }
+  .empty-text { margin-top: 11px; font-size: 12.5px; color: #C6C6CE; }
+
+  .footer { margin-top: 32px; text-align: center; font-size: 11px; color: #C6C6CE; }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">起名</div>
+    <div class="sub">填上姓，选个类型，敲两个关键词</div>
+  </div>
+
+  <div class="field" id="fieldBox">
+    <div class="field-top">
+      <span class="field-label">姓什么</span>
+      <span class="field-count" id="surnameLen">0/2</span>
+    </div>
+    <div class="input-row">
+      <span class="input-text ph" id="surnameText">比如：林、欧阳</span><span class="caret" id="caret"></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">起什么名</div>
+    <div class="chips" id="typeChips">
+      <div class="chip on" data-id="boy">男孩</div>
+      <div class="chip" data-id="girl">女孩</div>
+      <div class="chip" data-id="neutral">中性</div>
+      <div class="chip" data-id="brand">品牌</div>
+    </div>
+    <div class="hint" id="typeHint">偏硬朗，读着站得住</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">想带上什么意思</div>
+    <div class="kw-box">
+      <div class="kw-text ph" id="kwText">比如：山 水 / 安宁 / 月 光</div>
+    </div>
+    <div class="hint">空格隔开，最多 5 个。字义会对上这些方向的字</div>
+  </div>
+
+  <div class="btn-primary" id="btn">生成 3 个名字</div>
+
+  <div id="resultWrap" class="hidden">
+    <div class="result-head">
+      <span class="result-title">生成结果</span>
+      <span class="result-count" id="resultCount">3 个</span>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="unlock" id="unlock">
+      <div class="unlock-main">解锁批量生成</div>
+      <div class="unlock-sub">看一段激励视频，一次出 20 个</div>
+    </div>
+    <div class="unlocked-tip hidden" id="unlockedTip">已解锁，一次最多 20 个</div>
+  </div>
+
+  <div class="empty" id="empty">
+    <div class="empty-line"></div>
+    <div class="empty-text">填上姓，按下生成</div>
+  </div>
+
+  <div class="footer">本地字库，不上传任何输入内容</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/names.js"></script>
+<script>
+(function () {
+  var S = {
+    surname: '',
+    type: 'boy',
+    keywords: '',
+    list: [],
+    unlocked: false,
+    used: []
+  };
+
+  var el = {
+    fieldBox: document.getElementById('fieldBox'),
+    surnameText: document.getElementById('surnameText'),
+    surnameLen: document.getElementById('surnameLen'),
+    typeChips: document.getElementById('typeChips'),
+    typeHint: document.getElementById('typeHint'),
+    kwText: document.getElementById('kwText'),
+    btn: document.getElementById('btn'),
+    resultWrap: document.getElementById('resultWrap'),
+    resultCount: document.getElementById('resultCount'),
+    list: document.getElementById('list'),
+    unlock: document.getElementById('unlock'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    empty: document.getElementById('empty'),
+    toast: document.getElementById('toast')
+  };
+
+  var HINT = {
+    boy: '偏硬朗，读着站得住',
+    girl: '偏柔和，但不刻意',
+    neutral: '男女都能用，不设限',
+    brand: '短、好记、不生僻，不用填姓'
+  };
+
+  var toastTimer = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
+    });
+  }
+
+  function render() {
+    var brand = S.type === 'brand';
+
+    el.fieldBox.className = 'field' + (brand ? ' off' : '');
+    el.surnameLen.textContent = brand ? '品牌不用填' : S.surname.length + '/2';
+    if (brand) {
+      el.surnameText.textContent = '品牌名不带姓';
+      el.surnameText.className = 'input-text ph';
+    } else if (S.surname) {
+      el.surnameText.textContent = S.surname;
+      el.surnameText.className = 'input-text';
+    } else {
+      el.surnameText.textContent = '比如：林、欧阳';
+      el.surnameText.className = 'input-text ph';
+    }
+
+    [].forEach.call(el.typeChips.children, function (n) {
+      n.className = 'chip' + (n.dataset.id === S.type ? ' on' : '');
+    });
+    el.typeHint.textContent = HINT[S.type];
+
+    if (S.keywords) {
+      el.kwText.textContent = S.keywords;
+      el.kwText.className = 'kw-text';
+    } else {
+      el.kwText.textContent = '比如：山 水 / 安宁 / 月 光';
+      el.kwText.className = 'kw-text ph';
+    }
+
+    el.btn.textContent = S.list.length ? '换一批' : '生成 3 个名字';
+
+    if (S.list.length) {
+      el.resultWrap.classList.remove('hidden');
+      el.empty.classList.add('hidden');
+      el.resultCount.textContent = S.list.length + ' 个';
+
+      var html = '';
+      S.list.forEach(function (it, i) {
+        html += '<div class="item">' +
+          '<div class="item-top"><span class="idx">' + (i + 1) + '</span>' +
+          '<div class="item-body">' +
+          '<div class="name">' + esc(it.name) + '</div>' +
+          '<div class="py">' + esc(it.pinyin) + '</div>' +
+          '<div class="mean">' + esc(it.meaning) + '</div>' +
+          '<div class="item-bottom"><span class="meta">' +
+          '<span class="tag">' + esc(it.typeName) + '</span>' +
+          '<span class="tag">' + esc(it.tonePattern) + '</span>' +
+          '<span class="len">' + it.strokes + ' 画</span></span>' +
+          '<span class="copy" data-i="' + i + '">复制</span></div>' +
+          '</div></div>' +
+          '</div>';
+      });
+      el.list.innerHTML = html;
+
+      el.unlock.classList.toggle('hidden', S.unlocked);
+      el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+    } else {
+      el.resultWrap.classList.add('hidden');
+      el.empty.classList.remove('hidden');
+    }
+  }
+
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      el.toast.classList.remove('show');
+    }, 1600);
+  }
+
+  function gen(count, append) {
+    var r = NameGen.generate({
+      surname: S.surname,
+      type: S.type,
+      keywords: S.keywords,
+      count: count,
+      exclude: S.used
+    });
+    if (!r.ok) { toast(r.message); return false; }
+    var fresh = r.list.map(function (x) {
+      return {
+        id: x.id, name: x.name, pinyin: x.pinyin, meaning: x.meaning,
+        typeName: x.typeName, tonePattern: x.tonePattern, strokes: x.strokes
+      };
+    });
+    S.used = r.usedIds;
+    S.list = append ? S.list.concat(fresh) : fresh;
+    render();
+    return true;
+  }
+
+  // 截图脚本用的控制口
+  window.__ctl = {
+    reset: function () {
+      S = { surname: '', type: 'boy', keywords: '', list: [], unlocked: false, used: [] };
+      render();
+    },
+    setSurname: function (t) { S.surname = t; render(); },
+    setText: function (t) { S.surname = t; render(); },     // 别名，和前几支片子共用一套调用
+    setType: function (t) { S.type = t; S.list = []; S.used = []; render(); },
+    setKeywords: function (t) { S.keywords = t; S.list = []; S.used = []; render(); },
+    setScene: function (t) { this.setType(t); },            // 兼容旧脚本的叫法
+    generate: function (n) { return gen(n || 3, false); },
+    unlock: function () {
+      S.unlocked = true;
+      var need = Math.max(0, 20 - S.list.length);
+      if (need > 0) gen(need, true);
+      else render();
+    },
+    copy: function (i) {
+      var nodes = el.list.querySelectorAll('.copy');
+      if (nodes[i]) nodes[i].classList.add('done');
+      toast('已复制');
+    },
+    toast: toast,
+    hideToast: function () { el.toast.classList.remove('show'); },
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    focus: function (on) { document.getElementById('caret').style.display = on ? 'inline-block' : 'none'; },
+    state: function () { return S; }
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>

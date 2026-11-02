@@ -1,0 +1,110 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">起名</view>
+    <view class="sub">填上姓，选个类型，敲两个关键词</view>
+  </view>
+
+  <!-- 姓 -->
+  <view class="field {{type === 'brand' ? 'off' : ''}}">
+    <view class="field-top">
+      <text class="field-label">姓什么</text>
+      <text class="field-count">{{type === 'brand' ? '品牌不用填' : surnameLen + '/2'}}</text>
+    </view>
+    <input
+      class="input"
+      value="{{surname}}"
+      placeholder="{{type === 'brand' ? '品牌名不带姓' : '比如：林、欧阳'}}"
+      placeholder-class="ph"
+      maxlength="2"
+      confirm-type="next"
+      disabled="{{type === 'brand'}}"
+      bindinput="onSurnameInput"
+    />
+  </view>
+
+  <!-- 类型 -->
+  <view class="section">
+    <view class="section-label">起什么名</view>
+    <view class="chips">
+      <view
+        wx:for="{{types}}"
+        wx:key="id"
+        class="chip {{type === item.id ? 'on' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onType"
+      >{{item.name}}</view>
+    </view>
+    <view class="hint">{{typeHint}}</view>
+  </view>
+
+  <!-- 关键词 -->
+  <view class="section">
+    <view class="section-label">想带上什么意思</view>
+    <view class="kw-box">
+      <input
+        class="kw-input"
+        value="{{keywords}}"
+        placeholder="比如：山 水 / 安宁 / 月 光"
+        placeholder-class="ph"
+        confirm-type="done"
+        bindinput="onKeywordInput"
+        bindconfirm="onGenerate"
+      />
+    </view>
+    <view class="hint">空格隔开，最多 5 个。字义会对上这些方向的字</view>
+  </view>
+
+  <!-- 主按钮 -->
+  <view class="btn-primary {{generating ? 'dim' : ''}}" bindtap="onGenerate">
+    {{generating ? '生成中…' : (list.length ? '换一批' : '生成 3 个名字')}}
+  </view>
+
+  <!-- 结果 -->
+  <block wx:if="{{list.length}}">
+    <view class="result-head">
+      <text class="result-title">生成结果</text>
+      <text class="result-count">{{list.length}} 个</text>
+    </view>
+
+    <view class="list">
+      <view class="item" wx:for="{{list}}" wx:key="id">
+        <view class="item-top">
+          <text class="idx">{{index + 1}}</text>
+          <view class="item-body">
+            <view class="name">{{item.name}}</view>
+            <view class="py">{{item.pinyin}}</view>
+            <view class="mean">{{item.meaning}}</view>
+            <view class="item-bottom">
+              <view class="meta">
+                <text class="tag">{{item.typeName}}</text>
+                <text class="tag">{{item.tonePattern}}</text>
+                <text class="len">{{item.strokes}} 画</text>
+              </view>
+              <view class="copy" data-index="{{index}}" bindtap="onCopy">复制</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 解锁批量 -->
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+      <view class="unlock-main">解锁批量生成</view>
+      <view class="unlock-sub">看一段激励视频，一次出 20 个</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，一次最多 20 个</view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty" wx:else>
+    <view class="empty-line"></view>
+    <view class="empty-text">填上姓，按下生成</view>
+  </view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">本地字库，不上传任何输入内容</view>
+</view>
