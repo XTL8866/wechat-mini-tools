@@ -1,0 +1,110 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">取色</view>
+    <view class="sub">传一张图，点哪儿取哪儿</view>
+  </view>
+
+  <!-- 图片 -->
+  <view class="photo">
+    <image
+      wx:if="{{imgPath}}"
+      class="shot"
+      src="{{imgPath}}"
+      mode="widthFix"
+      bindtap="onTapImage"
+    />
+    <view wx:else class="picker" bindtap="onChoose">
+      <view class="picker-plus">+</view>
+      <view class="picker-text">还没有图，点这里选一张</view>
+    </view>
+    <view wx:if="{{point}}" class="marker" style="left:{{point.x}}%;top:{{point.y}}%">
+      <view class="m-ring"></view>
+      <view class="m-dot"></view>
+    </view>
+  </view>
+
+  <!-- 取色结果 -->
+  <view class="pick">
+    <view class="pick-top">
+      <view class="sw {{picked ? '' : 'empty'}}" style="{{picked ? 'background:' + picked.hex : ''}}"></view>
+      <view class="pick-info">
+        <view class="pick-hex {{picked ? '' : 'dim'}}">{{picked ? picked.hex : '- - -'}}</view>
+        <view class="pick-name">{{picked ? picked.line : '点图上任意位置'}}</view>
+        <view class="pick-meta">{{picked ? picked.meta : '取到的颜色会自动进色卡'}}</view>
+      </view>
+      <view class="pick-copy {{copied ? 'done' : ''}}" bindtap="onCopy">{{copied ? '已复制' : '复制'}}</view>
+    </view>
+    <view class="fmts">
+      <view class="fmt"><text class="fmt-k">HEX</text><text class="fmt-v {{picked ? '' : 'dim'}}">{{picked ? fmt.hex : '—'}}</text></view>
+      <view class="fmt"><text class="fmt-k">RGB</text><text class="fmt-v {{picked ? '' : 'dim'}}">{{picked ? fmt.rgb : '—'}}</text></view>
+      <view class="fmt"><text class="fmt-k">HSL</text><text class="fmt-v {{picked ? '' : 'dim'}}">{{picked ? fmt.hsl : '—'}}</text></view>
+    </view>
+  </view>
+
+  <!-- 主色 -->
+  <view class="sec-head">
+    <text class="sec-title">这张图的主色</text>
+    <text class="sec-count">{{main.length ? main.length + ' 个' : '还没扫'}}</text>
+  </view>
+  <view class="bar">
+    <block wx:if="{{main.length}}">
+      <view
+        wx:for="{{main}}"
+        wx:key="hex"
+        class="bar-seg"
+        style="width:{{item.pct}}%;background:{{item.hex}}"
+      ></view>
+    </block>
+    <view wx:else class="bar-empty">按「扫主色」自动挑出来</view>
+  </view>
+  <view wx:if="{{main.length}}" class="main-chips">
+    <view
+      wx:for="{{main}}"
+      wx:key="hex"
+      class="main-chip {{mainOn === index ? 'on' : ''}}"
+      data-i="{{index}}"
+      bindtap="onPickMain"
+    >
+      <view class="mh">{{item.hex}}</view>
+      <view class="mn">{{item.name}} · {{item.pct}}%</view>
+    </view>
+  </view>
+  <view wx:if="{{!main.length}}" class="scan-btn {{scanning ? 'dim' : ''}}" bindtap="onScan">
+    {{scanning ? '扫色中…' : '扫主色'}}
+  </view>
+
+  <!-- 解锁 -->
+  <view wx:if="{{!unlocked}}" class="unlock" bindtap="onUnlock">
+    <view class="unlock-main">解锁全部主色</view>
+    <view class="unlock-sub">看一段激励视频，扫出 6 个主色，色卡能存 60 张</view>
+  </view>
+  <view wx:else class="unlocked-tip">已解锁：6 个主色，色卡 60 张</view>
+
+  <!-- 色卡 -->
+  <view class="sec-head">
+    <text class="sec-title">色卡</text>
+    <text class="sec-count">{{palette.length}}/{{palLimit}}</text>
+  </view>
+  <view wx:if="{{palette.length}}" class="pal">
+    <view
+      wx:for="{{palette}}"
+      wx:key="hex"
+      class="pal-item"
+      style="background:{{item.hex}};color:{{item.ink}}"
+      data-i="{{index}}"
+      bindtap="onPickSaved"
+      bindlongpress="onRemoveSaved"
+    >
+      <text class="ph">{{item.hex}}</text>
+    </view>
+  </view>
+  <view wx:else class="pal-empty">取过的颜色会自动留在这儿</view>
+  <view wx:if="{{palette.length}}" class="pal-hint">点一下取回，长按删掉</view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">图片只在本地读像素，不上传</view>
+</view>

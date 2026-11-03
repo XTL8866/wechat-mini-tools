@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>取色 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 图片 */
+  .photo {
+    margin-top: 18px; position: relative; border-radius: 13px; overflow: hidden;
+    background: #F1F1F4; line-height: 0;
+  }
+  #cv { display: block; width: 100%; height: auto; }
+  .ph-mask {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background: #F4F4F6; display: none;
+    align-items: center; justify-content: center;
+    font-size: 13px; color: #B4B4BC; line-height: 1.5;
+  }
+  .ph-mask.on { display: flex; }
+
+  /* 取色标记 */
+  .marker {
+    position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px;
+    opacity: 0; pointer-events: none;
+  }
+  .marker.on { opacity: 1; }
+  .marker i {
+    position: absolute; left: 0; top: 0; width: 34px; height: 34px;
+    border: 2.5px solid #FFFFFF; border-radius: 50%;
+    box-shadow: 0 0 0 1.5px rgba(0,0,0,0.42), inset 0 0 0 1.5px rgba(0,0,0,0.28);
+  }
+  .marker b {
+    position: absolute; left: 13px; top: 13px; width: 8px; height: 8px;
+    border-radius: 50%; background: #FFFFFF;
+    box-shadow: 0 0 0 1.5px rgba(0,0,0,0.5);
+  }
+
+  /* 取色结果 */
+  .pick { margin-top: 13px; background: #F6F6F8; border-radius: 13px; padding: 13px 14px 12px; }
+  .pick-top { display: flex; align-items: center; }
+  .sw {
+    width: 62px; height: 62px; border-radius: 12px; flex-shrink: 0;
+    background: #E9E9EC; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+  .sw.empty {
+    background: repeating-linear-gradient(45deg, #E4E4E8 0 6px, #EFEFF2 6px 12px);
+  }
+  .pick-info { flex: 1; min-width: 0; padding-left: 14px; }
+  .pick-hex {
+    font-size: 25px; font-weight: 700; letter-spacing: 0.4px; line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+  }
+  .pick-hex.dim { color: #C6C6CE; letter-spacing: 2px; }
+  .pick-name { margin-top: 5px; font-size: 13px; color: #5A5A64; }
+  .pick-meta { margin-top: 4px; font-size: 10.8px; color: #B4B4BC; }
+  .pick-copy {
+    flex-shrink: 0; font-size: 12.5px; color: #FF4D3D; padding: 6px 2px 6px 14px;
+  }
+  .pick-copy.done { color: #B4B4BC; }
+
+  .fmts { margin-top: 11px; border-top: 1px solid #ECECF0; padding-top: 9px; }
+  .fmt { display: flex; align-items: baseline; height: 20px; }
+  .fmt-k {
+    width: 38px; flex-shrink: 0; font-size: 10.5px; color: #B4B4BC; letter-spacing: 0.5px;
+  }
+  .fmt-v {
+    font-size: 12.2px; color: #3A3A42; font-variant-numeric: tabular-nums;
+    white-space: nowrap; overflow: hidden;
+  }
+  .fmt-v.dim { color: #C6C6CE; }
+
+  /* 分区头 */
+  .sec-head {
+    margin-top: 22px; display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .sec-title { font-size: 12.5px; color: #86868E; }
+  .sec-count { font-size: 11.5px; color: #B4B4BC; }
+
+  /* 主色条 */
+  .bar {
+    margin-top: 11px; height: 46px; border-radius: 10px; overflow: hidden;
+    display: flex; background: #F4F4F6;
+  }
+  .bar > div { height: 100%; }
+  .bar-empty {
+    display: flex; align-items: center; justify-content: center; width: 100%;
+    font-size: 11.5px; color: #C6C6CE;
+  }
+  .scan-btn {
+    margin-top: 10px; height: 44px; border-radius: 10px; background: #101014;
+    color: #FFFFFF; font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .scan-btn.dim { opacity: 0.55; }
+  .main-chips { margin-top: 9px; display: flex; flex-wrap: wrap; }  .main-chip {
+    width: 32%; min-width: 0; padding: 7px 8px 7px 9px; border-radius: 8px;
+    background: #F6F6F8; margin: 0 2% 6px 0;
+  }
+  .main-chip:nth-child(3n) { margin-right: 0; }
+  .main-chip .mh { font-size: 11.5px; font-weight: 600; color: #3A3A42; font-variant-numeric: tabular-nums; }
+  .main-chip .mn { margin-top: 2px; font-size: 10px; color: #B4B4BC; white-space: nowrap; overflow: hidden; }
+  .main-chip.on { background: #FFEFEC; box-shadow: inset 0 0 0 1.5px #FFC9C0; }
+
+  /* 解锁 */
+  .unlock { margin-top: 20px; background: #FFF3F1; border-radius: 11.5px; padding: 13px 14.5px; }
+  .unlock-main { font-size: 15px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 11.5px; color: #C4746A; }
+  .unlocked-tip { margin-top: 20px; font-size: 11.5px; color: #B4B4BC; text-align: center; }
+
+  /* 色卡 */
+  .pal { margin-top: 10px; display: flex; flex-wrap: wrap; }
+  .pal-item {
+    position: relative; width: 112px; height: 82px; border-radius: 10px;
+    margin: 0 8px 8px 0; padding: 0 9px 8px 10px;
+    display: flex; align-items: flex-end;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.07);
+  }
+  .pal-item:nth-child(3n) { margin-right: 0; }
+  .pal-item .ph { font-size: 11px; font-weight: 600; letter-spacing: 0.2px; font-variant-numeric: tabular-nums; }
+  .pal-empty {
+    margin-top: 12px; padding: 20px 0; text-align: center;
+    font-size: 11.5px; color: #C6C6CE; background: #FAFAFB; border-radius: 10px;
+  }
+  .pal-hint { margin-top: 2px; font-size: 10.5px; color: #C6C6CE; }
+
+  .footer { margin-top: 26px; text-align: center; font-size: 11px; color: #C6C6CE; line-height: 1.6; }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">取色</div>
+    <div class="sub">传一张图，点哪儿取哪儿</div>
+  </div>
+
+  <div class="photo" id="photo">
+    <canvas id="cv" width="1080" height="1080"></canvas>
+    <div class="ph-mask" id="phMask">还没有图<br>点这里选一张</div>
+    <div class="marker" id="marker"><i></i><b></b></div>
+  </div>
+
+  <div class="pick">
+    <div class="pick-top">
+      <div class="sw empty" id="sw"></div>
+      <div class="pick-info">
+        <div class="pick-hex dim" id="hexText">- - -</div>
+        <div class="pick-name" id="nameText">点图上任意位置</div>
+        <div class="pick-meta" id="metaText">取到的颜色会自动进色卡</div>
+      </div>
+      <div class="pick-copy" id="copyBtn">复制</div>
+    </div>
+    <div class="fmts">
+      <div class="fmt"><span class="fmt-k">HEX</span><span class="fmt-v dim" id="vHex">—</span></div>
+      <div class="fmt"><span class="fmt-k">RGB</span><span class="fmt-v dim" id="vRgb">—</span></div>
+      <div class="fmt"><span class="fmt-k">HSL</span><span class="fmt-v dim" id="vHsl">—</span></div>
+    </div>
+  </div>
+
+  <div class="sec-head">
+    <span class="sec-title">这张图的主色</span>
+    <span class="sec-count" id="mainCount">还没扫</span>
+  </div>
+  <div class="bar" id="bar"><div class="bar-empty">按「扫主色」自动挑出来</div></div>
+  <div class="scan-btn" id="scanBtn">扫主色</div>
+  <div class="main-chips hidden" id="mainChips"></div>
+
+  <div class="unlock" id="unlockBox">
+    <div class="unlock-main">解锁全部主色</div>
+    <div class="unlock-sub">看一段激励视频，扫出 6 个主色，色卡能存 60 张</div>
+  </div>
+  <div class="unlocked-tip hidden" id="unlockedTip">已解锁：6 个主色，色卡 60 张</div>
+
+  <div class="sec-head">
+    <span class="sec-title">色卡</span>
+    <span class="sec-count" id="palCount">0/6</span>
+  </div>
+  <div class="pal" id="pal"></div>
+  <div class="pal-empty" id="palEmpty">取过的颜色会自动留在这儿</div>
+  <div class="pal-hint hidden" id="palHint">点一下取回，长按删掉</div>
+
+  <div class="footer">图片只在本地读像素，不上传</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/sample.js"></script>
+<script src="../miniprogram/core/color.js"></script>
+<script>
+(function () {
+  var C = window.ColorKit;
+
+  var S = {
+    imgW: 1080, imgH: 1080,
+    picked: null,      // 当前取到的色 { r,g,b,hex }
+    point: null,       // 归一化坐标 { x, y }
+    main: [],          // 主色数组
+    mainOn: -1,        // 当前点中的主色下标
+    palette: [],
+    unlocked: false,
+    copied: false
+  };
+
+  var el = {
+    photo: document.getElementById('photo'),
+    cv: document.getElementById('cv'),
+    phMask: document.getElementById('phMask'),
+    marker: document.getElementById('marker'),
+    sw: document.getElementById('sw'),
+    hexText: document.getElementById('hexText'),
+    nameText: document.getElementById('nameText'),
+    metaText: document.getElementById('metaText'),
+    copyBtn: document.getElementById('copyBtn'),
+    vHex: document.getElementById('vHex'),
+    vRgb: document.getElementById('vRgb'),
+    vHsl: document.getElementById('vHsl'),
+    mainCount: document.getElementById('mainCount'),
+    bar: document.getElementById('bar'),
+    scanBtn: document.getElementById('scanBtn'),
+    mainChips: document.getElementById('mainChips'),
+    unlockBox: document.getElementById('unlockBox'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    palCount: document.getElementById('palCount'),
+    pal: document.getElementById('pal'),
+    palEmpty: document.getElementById('palEmpty'),
+    palHint: document.getElementById('palHint'),
+    toast: document.getElementById('toast')
+  };
+
+  var ctx = el.cv.getContext('2d', { willReadFrequently: true });
+  var PIX = null;          // 整幅图的 ImageData.data，取点和扫主色都从这里读
+
+  /* ---------------- 图片 ---------------- */
+  function loadImage() {
+    if (!window.SAMPLE_IMG) { el.phMask.classList.add('on'); return; }
+    var im = new Image();
+    im.onload = function () {
+      el.cv.width = im.naturalWidth;
+      el.cv.height = im.naturalHeight;
+      S.imgW = im.naturalWidth;
+      S.imgH = im.naturalHeight;
+      ctx.drawImage(im, 0, 0);
+      PIX = ctx.getImageData(0, 0, S.imgW, S.imgH).data;
+      el.phMask.classList.remove('on');
+      render();
+    };
+    im.onerror = function () { el.phMask.classList.add('on'); };
+    im.src = window.SAMPLE_IMG;
+  }
+
+  /* ---------------- 渲染 ---------------- */
+  function render() {
+    var c = S.picked;
+
+    if (c) {
+      el.sw.className = 'sw';
+      el.sw.style.background = c.hex;
+      el.hexText.className = 'pick-hex';
+      el.hexText.textContent = c.hex;
+      el.nameText.textContent = C.describe(c).name + ' · ' + C.tone(c);
+      el.metaText.textContent = '白字 ' + C.contrastRatio(c, '#FFFFFF') + ':1 · 黑字 ' +
+        C.contrastRatio(c, '#101014') + ':1';
+
+      var f = C.allFormats(c);
+      el.vHex.textContent = f.hex;
+      el.vRgb.textContent = f.rgb;
+      el.vHsl.textContent = f.hsl;
+      [el.vHex, el.vRgb, el.vHsl].forEach(function (n) { n.className = 'fmt-v'; });
+
+      el.copyBtn.className = 'pick-copy' + (S.copied ? ' done' : '');
+      el.copyBtn.textContent = S.copied ? '已复制' : '复制';
+    } else {
+      el.sw.className = 'sw empty';
+      el.sw.style.background = '';
+      el.hexText.className = 'pick-hex dim';
+      el.hexText.textContent = '- - -';
+      el.nameText.textContent = '点图上任意位置';
+      el.metaText.textContent = '取到的颜色会自动进色卡';
+      el.vHex.textContent = '—'; el.vRgb.textContent = '—'; el.vHsl.textContent = '—';
+      [el.vHex, el.vRgb, el.vHsl].forEach(function (n) { n.className = 'fmt-v dim'; });
+      el.copyBtn.className = 'pick-copy';
+      el.copyBtn.textContent = '复制';
+    }
+
+    // 标记
+    if (S.point) {
+      el.marker.style.left = (S.point.x * 100).toFixed(3) + '%';
+      el.marker.style.top = (S.point.y * 100).toFixed(3) + '%';
+      el.marker.classList.add('on');
+    } else {
+      el.marker.classList.remove('on');
+    }
+
+    // 主色
+    if (S.main.length) {
+      el.mainCount.textContent = S.main.length + ' 个';
+      // flex-grow 的和必须凑成 1，否则占比小的几段加不满，右边会留一片空白
+      var sum = 0;
+      S.main.forEach(function (m) { sum += m.ratio; });
+      if (sum <= 0) sum = 1;
+      var html = '';
+      S.main.forEach(function (m) {
+        html += '<div style="flex:0 0 ' + (m.ratio / sum * 100).toFixed(2) + '%;background:' +
+          m.hex + '"></div>';
+      });
+      el.bar.innerHTML = html;
+
+      var chips = '';
+      S.main.forEach(function (m, i) {
+        chips += '<div class="main-chip' + (i === S.mainOn ? ' on' : '') + '" data-i="' + i + '">' +
+          '<div class="mh">' + m.hex + '</div>' +
+          '<div class="mn">' + m.name + ' · ' + Math.round(m.ratio * 100) + '%</div></div>';
+      });
+      el.mainChips.innerHTML = chips;
+      el.mainChips.classList.remove('hidden');
+      el.scanBtn.classList.add('hidden');
+    } else {
+      el.mainCount.textContent = '还没扫';
+      el.bar.innerHTML = '<div class="bar-empty">按「扫主色」自动挑出来</div>';
+      el.mainChips.classList.add('hidden');
+      el.scanBtn.classList.remove('hidden');
+    }
+
+    // 解锁
+    el.unlockBox.classList.toggle('hidden', S.unlocked);
+    el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+
+    // 色卡
+    var lim = C.paletteLimit(S.unlocked);
+    el.palCount.textContent = S.palette.length + '/' + lim;
+    if (S.palette.length) {
+      var ph = '';
+      S.palette.forEach(function (p, i) {
+        ph += '<div class="pal-item" data-i="' + i + '" style="background:' + p.hex + '">' +
+          '<span class="ph" style="color:' + C.readableInk(p) + '">' + p.hex + '</span></div>';
+      });
+      el.pal.innerHTML = ph;
+      el.pal.classList.remove('hidden');
+      el.palEmpty.classList.add('hidden');
+      el.palHint.classList.remove('hidden');
+    } else {
+      el.pal.innerHTML = '';
+      el.pal.classList.add('hidden');
+      el.palEmpty.classList.remove('hidden');
+      el.palHint.classList.add('hidden');
+    }
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+
+  /* ---------------- 动作 ---------------- */
+  // 取一个色：写结果 + 自动进色卡。取点本身就是「用」，存色卡不该再让用户点一次
+  function applyColor(c, point) {
+    S.picked = { r: c.r, g: c.g, b: c.b, hex: c.hex };
+    S.copied = false;
+    if (point) S.point = point;
+
+    var r = C.addToPalette(S.palette, c, C.paletteLimit(S.unlocked));
+    S.palette = r.list;
+    S.mainOn = -1;
+    render();
+    if (!r.ok && r.code === 'FULL') toast(r.message);
+    return r;
+  }
+
+  function pickAt(nx, ny) {
+    if (!PIX) { toast('先选一张图片'); return false; }
+    var px = Math.round(nx * S.imgW);
+    var py = Math.round(ny * S.imgH);
+    var c = C.pick(PIX, S.imgW, S.imgH, px, py);
+    if (!c.ok) { toast(c.message); return false; }
+    applyColor(c, { x: nx, y: ny });
+    return true;
+  }
+
+  function pickIndex(i) {
+    var m = S.main[i];
+    if (!m) return false;
+    S.mainOn = i;
+    applyColor(m, null);
+    render();
+    return true;
+  }
+
+  function scan() {
+    if (!PIX) { toast('先选一张图片'); return false; }
+    var n = C.mainLimit(S.unlocked);
+    var list = C.extract(PIX, S.imgW, S.imgH, n);
+    if (!list.length) { toast('这张图扫不出主色，换一张'); return false; }
+    S.main = list;
+    S.mainOn = -1;
+    render();
+    return true;
+  }
+
+  function copyCurrent() {
+    if (!S.picked) { toast('先取一个颜色'); return false; }
+    S.copied = true;
+    render();
+    toast('已复制 ' + S.picked.hex);
+    return true;
+  }
+
+  function unlock() {
+    S.unlocked = true;
+    if (S.main.length) S.main = C.extract(PIX, S.imgW, S.imgH, C.mainLimit(true));
+    S.mainOn = -1;   // 主色重扫过了，旧的高亮下标已经对不上
+    render();
+    toast('已解锁全部主色');
+    return true;
+  }
+
+  function reset() {
+    S.picked = null;
+    S.point = null;
+    S.main = [];
+    S.mainOn = -1;
+    S.palette = [];
+    S.unlocked = false;
+    S.copied = false;
+    render();
+  }
+
+  // 图上的点击：把屏幕坐标换成图片坐标，再走同一套逻辑
+  el.photo.addEventListener('click', function (e) {
+    if (!PIX) return;
+    var r = el.cv.getBoundingClientRect();
+    if (!r.width) return;
+    pickAt((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
+  });
+
+  el.mainChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.main-chip') : null;
+    if (n) pickIndex(parseInt(n.dataset.i, 10));
+  });
+
+  el.copyBtn.addEventListener('click', copyCurrent);
+  el.scanBtn.addEventListener('click', scan);
+
+  el.pal.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.pal-item') : null;
+    if (!n) return;
+    var p = S.palette[parseInt(n.dataset.i, 10)];
+    if (!p) return;
+    S.picked = { r: p.r, g: p.g, b: p.b, hex: p.hex };
+    S.copied = false;
+    render();
+    toast('已取回 ' + p.hex);
+  });
+
+  /* ---------------- 截图脚本的控制口 ---------------- */
+  window.__ctl = {
+    reset: reset,
+    pickAt: pickAt,
+    setPoint: pickAt,
+    pickHex: function (h) {
+      var c = C.parseColor(h);
+      if (!c.ok) return false;
+      applyColor(c, S.point || { x: 0.5, y: 0.5 });
+      return true;
+    },
+    pickMain: pickIndex,
+    setMain: pickIndex,
+    generate: function () { return scan(); },
+    scan: scan,
+    unlock: unlock,
+    copy: function () { return copyCurrent(); },
+    save: function () { return !!S.picked; },
+    toast: toast,
+    hideToast: function () { el.toast.classList.remove('show'); },
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    focus: function () {},
+    state: function () { return S; }
+  };
+
+  loadImage();
+  render();
+})();
+</script>
+</body>
+</html>
