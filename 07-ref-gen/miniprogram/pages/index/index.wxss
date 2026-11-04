@@ -1,0 +1,311 @@
+.page {
+  padding: 24rpx 33rpx 60rpx;
+}
+
+/* ---------- 顶部 ---------- */
+.hero {
+  padding-top: 16rpx;
+}
+
+.h1 {
+  font-size: 54rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+  line-height: 1.2;
+}
+
+.sub {
+  margin-top: 12rpx;
+  font-size: 27rpx;
+  color: #86868E;
+  line-height: 1.5;
+}
+
+/* ---------- 类型 ---------- */
+.types {
+  margin-top: 32rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tchip {
+  width: 23.5%;
+  margin: 0 2% 12rpx 0;
+  height: 62rpx;
+  border-radius: 16rpx;
+  background: #F4F4F6;
+  font-size: 24rpx;
+  color: #5A5A64;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tchip:nth-child(4n) {
+  margin-right: 0;
+}
+
+.tchip.on {
+  background: #101014;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------- 表单 ---------- */
+.form {
+  margin-top: 6rpx;
+  background: #F6F6F8;
+  border-radius: 26rpx;
+  padding: 4rpx 28rpx 6rpx;
+}
+
+.formhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 66rpx;
+}
+
+.fh-t {
+  font-size: 23rpx;
+  color: #B4B4BC;
+}
+
+.fh-a {
+  display: flex;
+}
+
+.fh-btn {
+  font-size: 23rpx;
+  color: #FF4D3D;
+  padding-left: 26rpx;
+}
+
+.frow {
+  display: flex;
+  align-items: center;
+  height: 78rpx;
+  border-top: 2rpx solid #EDEDF0;
+}
+
+.flabel {
+  width: 136rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: #86868E;
+}
+
+.req {
+  color: #FF4D3D;
+  font-size: 25rpx;
+  margin-left: 2rpx;
+}
+
+.finput {
+  flex: 1;
+  height: 78rpx;
+  font-size: 26rpx;
+  color: #101014;
+  min-width: 0;
+}
+
+.fph {
+  color: #C6C6CE;
+  font-size: 25rpx;
+}
+
+/* ---------- 生成按钮 ---------- */
+.gen {
+  margin-top: 20rpx;
+  height: 84rpx;
+  border-radius: 18rpx;
+  background: #101014;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- 结果 ---------- */
+.res {
+  margin-top: 24rpx;
+  background: #F6F6F8;
+  border-radius: 26rpx;
+  padding: 22rpx 26rpx 24rpx;
+}
+
+.res-top {
+  display: flex;
+  align-items: center;
+}
+
+.res-mark {
+  font-size: 21rpx;
+  font-weight: 700;
+  color: #D93A2B;
+  background: #FFEFEC;
+  border-radius: 10rpx;
+  padding: 4rpx 12rpx;
+  letter-spacing: 0.4rpx;
+}
+
+.res-mark.dim {
+  color: #C6C6CE;
+  background: #EDEDF0;
+}
+
+.res-kind {
+  flex: 1;
+  margin-left: 14rpx;
+  font-size: 23rpx;
+  color: #86868E;
+}
+
+.res-copy {
+  font-size: 24rpx;
+  color: #FF4D3D;
+  padding-left: 20rpx;
+}
+
+.res-copy.done {
+  color: #B4B4BC;
+}
+
+.res-tx {
+  margin-top: 16rpx;
+  font-size: 25rpx;
+  line-height: 1.72;
+  color: #26262C;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.res-empty {
+  padding: 28rpx 0 18rpx;
+  font-size: 24rpx;
+  color: #C6C6CE;
+}
+
+/* ---------- 列表 ---------- */
+.sec-head {
+  margin-top: 40rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sec-title {
+  font-size: 25rpx;
+  color: #86868E;
+}
+
+.sec-op {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #FF4D3D;
+}
+
+.sec-sub {
+  margin-top: 12rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sec-count {
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.sec-sort {
+  font-size: 22rpx;
+  color: #86868E;
+}
+
+.items {
+  margin-top: 4rpx;
+}
+
+.item {
+  display: flex;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid #F2F2F4;
+}
+
+.item-no {
+  width: 56rpx;
+  flex-shrink: 0;
+  font-size: 23rpx;
+  color: #B4B4BC;
+  font-variant-numeric: tabular-nums;
+}
+
+.item-tx {
+  flex: 1;
+  font-size: 24rpx;
+  line-height: 1.66;
+  color: #3A3A42;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.list-empty {
+  margin-top: 16rpx;
+  padding: 40rpx 0;
+  text-align: center;
+  font-size: 23rpx;
+  color: #C6C6CE;
+  background: #FAFAFB;
+  border-radius: 20rpx;
+}
+
+.list-hint {
+  margin-top: 12rpx;
+  font-size: 21rpx;
+  color: #C6C6CE;
+}
+
+/* ---------- 解锁 ---------- */
+.unlock {
+  margin-top: 36rpx;
+  background: #FFF3F1;
+  border-radius: 22rpx;
+  padding: 26rpx 28rpx;
+}
+
+.unlock-main {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #D93A2B;
+}
+
+.unlock-sub {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: #C4746A;
+}
+
+.unlocked-tip {
+  margin-top: 36rpx;
+  font-size: 23rpx;
+  color: #B4B4BC;
+  text-align: center;
+}
+
+/* ---------- 页脚 ---------- */
+.note {
+  margin-top: 40rpx;
+  font-size: 21rpx;
+  color: #B4B4BC;
+  line-height: 1.85;
+}
+
+.footer {
+  margin-top: 28rpx;
+  text-align: center;
+  font-size: 21rpx;
+  color: #C6C6CE;
+  line-height: 1.6;
+}

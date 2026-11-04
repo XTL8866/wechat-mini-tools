@@ -1,0 +1,95 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">参考文献</view>
+    <view class="sub">填几个空，国标格式自己出来</view>
+  </view>
+
+  <!-- 类型 -->
+  <view class="types">
+    <view
+      wx:for="{{types}}"
+      wx:key="key"
+      class="tchip {{typeKey === item.key ? 'on' : ''}}"
+      data-k="{{item.key}}"
+      bindtap="onType"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 表单 -->
+  <view class="form">
+    <view class="formhead">
+      <text class="fh-t">{{typeCn}} · 填这几格</text>
+      <view class="fh-a">
+        <text class="fh-btn" bindtap="onSample">示例</text>
+        <text class="fh-btn" bindtap="onClear">清空</text>
+      </view>
+    </view>
+
+    <view class="frow" wx:for="{{fields}}" wx:key="key">
+      <text class="flabel">{{item.label}}<text wx:if="{{item.req}}" class="req">*</text></text>
+      <input
+        class="finput"
+        value="{{form[item.key]}}"
+        data-k="{{item.key}}"
+        placeholder="{{item.ph}}"
+        placeholder-class="fph"
+        bindinput="onInput"
+        confirm-type="done"
+      />
+    </view>
+  </view>
+
+  <view class="gen" bindtap="onGenerate">生成引用</view>
+
+  <!-- 结果 -->
+  <view class="res">
+    <view class="res-top">
+      <text class="res-mark {{built ? '' : 'dim'}}">{{built ? mark : '[ ]'}}</text>
+      <text class="res-kind">{{built ? typeCn : '生成后会出现在这里'}}</text>
+      <text class="res-copy {{copied ? 'done' : ''}}" bindtap="onCopyOne">{{copied ? '已复制' : '复制'}}</text>
+    </view>
+    <view wx:if="{{built}}" class="res-tx">{{built.text}}</view>
+    <view wx:else class="res-empty">上面填完点「生成引用」，标点按国标拼好</view>
+  </view>
+
+  <!-- 列表 -->
+  <view class="sec-head">
+    <text class="sec-title">我的文献</text>
+    <text class="sec-op" bindtap="onCopyAll">复制全部</text>
+  </view>
+  <view class="sec-sub">
+    <text class="sec-count">{{list.length}}/{{limit}}</text>
+    <text class="sec-sort" bindtap="onSort">{{sortText}} ↻</text>
+  </view>
+
+  <view wx:if="{{list.length}}" class="items">
+    <view
+      wx:for="{{list}}"
+      wx:key="text"
+      class="item"
+      data-i="{{index}}"
+      bindlongpress="onRemove"
+    >
+      <text class="item-no">[{{index + 1}}]</text>
+      <text class="item-tx">{{item.text}}</text>
+    </view>
+  </view>
+  <view wx:else class="list-empty">生成过的引用会自动存进来</view>
+  <view wx:if="{{list.length}}" class="list-hint">长按删掉一条</view>
+
+  <!-- 解锁 -->
+  <view wx:if="{{!unlocked}}" class="unlock" bindtap="onUnlock">
+    <view class="unlock-main">解锁文献列表</view>
+    <view class="unlock-sub">看一段激励视频，能存 20 条，够写一整章</view>
+  </view>
+  <view wx:else class="unlocked-tip">已解锁：最多存 20 条</view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="note">自动处理：作者超三个截断、外文姓前名缩写、页码统一半角短横。</view>
+
+  <view class="footer">只在本地拼，不上传任何内容</view>
+</view>

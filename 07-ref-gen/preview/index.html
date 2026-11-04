@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>参考文献 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 类型 */
+  .types { margin-top: 16px; display: flex; flex-wrap: wrap; }
+  .tchip {
+    width: 23.5%; margin: 0 2% 6px 0; height: 31px; border-radius: 8px;
+    background: #F4F4F6; font-size: 12px; color: #5A5A64;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .tchip:nth-child(4n) { margin-right: 0; }
+  .tchip.on { background: #101014; color: #FFFFFF; font-weight: 600; }
+
+  /* 表单 */
+  .form { margin-top: 3px; background: #F6F6F8; border-radius: 13px; padding: 2px 14px 3px; }
+  .formhead {
+    display: flex; align-items: center; justify-content: space-between; height: 33px;
+  }
+  .fh-t { font-size: 11.5px; color: #B4B4BC; }
+  .fh-a { display: flex; }
+  .fh-btn { font-size: 11.5px; color: #FF4D3D; padding-left: 13px; cursor: pointer; }
+
+  .frow {
+    display: flex; align-items: center; height: 39px;
+    border-top: 1px solid #EDEDF0;
+  }
+  .flabel { width: 68px; flex-shrink: 0; font-size: 12.5px; color: #86868E; }
+  .flabel .req { color: #FF4D3D; margin-left: 1px; }
+  .finput {
+    flex: 1; min-width: 0; height: 39px; font-size: 13px; color: #101014;
+    border: none; background: transparent; outline: none; font-family: inherit;
+  }
+  .finput::placeholder { color: #C6C6CE; font-size: 12.5px; }
+
+  /* 生成 */
+  .gen {
+    margin-top: 10px; height: 42px; border-radius: 9px; background: #101014;
+    color: #FFFFFF; font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+
+  /* 结果 */
+  .res { margin-top: 12px; background: #F6F6F8; border-radius: 13px; padding: 11px 13px 12px; }
+  .res-top { display: flex; align-items: center; }
+  .res-mark {
+    font-size: 10.5px; font-weight: 700; color: #D93A2B; background: #FFEFEC;
+    border-radius: 5px; padding: 2px 6px; letter-spacing: 0.2px;
+  }
+  .res-mark.dim { color: #C6C6CE; background: #EDEDF0; }
+  .res-kind { flex: 1; margin-left: 7px; font-size: 11.5px; color: #86868E; }
+  .res-copy { font-size: 12px; color: #FF4D3D; padding-left: 10px; cursor: pointer; }
+  .res-copy.done { color: #B4B4BC; }
+  .res-tx { margin-top: 8px; font-size: 12.5px; line-height: 1.72; color: #26262C; overflow-wrap: break-word; word-break: normal; }
+  .res-empty { padding: 14px 0 9px; font-size: 12px; color: #C6C6CE; }
+
+  /* 列表 */
+  .sec-head {
+    margin-top: 20px; display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .sec-title { font-size: 12.5px; color: #86868E; }
+  .sec-op { font-size: 12px; font-weight: 600; color: #FF4D3D; cursor: pointer; }
+  .sec-sub { margin-top: 6px; display: flex; justify-content: space-between; align-items: baseline; }
+  .sec-count { font-size: 11px; color: #B4B4BC; }
+  .sec-sort { font-size: 11px; color: #86868E; cursor: pointer; }
+
+  .items { margin-top: 2px; }
+  .item { display: flex; padding: 9px 0; border-bottom: 1px solid #F2F2F4; }
+  .item-no {
+    width: 28px; flex-shrink: 0; font-size: 11.5px; color: #B4B4BC;
+    font-variant-numeric: tabular-nums;
+  }
+  .item-tx { flex: 1; font-size: 12px; line-height: 1.66; color: #3A3A42; overflow-wrap: break-word; word-break: normal; }
+
+  .list-empty {
+    margin-top: 8px; padding: 20px 0; text-align: center; font-size: 11.5px;
+    color: #C6C6CE; background: #FAFAFB; border-radius: 10px;
+  }
+  .list-hint { margin-top: 6px; font-size: 10.5px; color: #C6C6CE; }
+
+  /* 解锁 */
+  .unlock { margin-top: 18px; background: #FFF3F1; border-radius: 11px; padding: 13px 14px; }
+  .unlock-main { font-size: 14.5px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 11.5px; color: #C4746A; }
+  .unlocked-tip { margin-top: 18px; font-size: 11.5px; color: #B4B4BC; text-align: center; }
+
+  .note { margin-top: 20px; font-size: 10.5px; color: #B4B4BC; line-height: 1.85; }
+  .footer { margin-top: 14px; text-align: center; font-size: 10.5px; color: #C6C6CE; line-height: 1.6; }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">参考文献</div>
+    <div class="sub">填几个空，国标格式自己出来</div>
+  </div>
+
+  <div class="types" id="types"></div>
+
+  <div class="form">
+    <div class="formhead">
+      <span class="fh-t" id="fhT">期刊论文 · 填这几格</span>
+      <div class="fh-a">
+        <span class="fh-btn" id="sampleBtn">示例</span>
+        <span class="fh-btn" id="clearBtn">清空</span>
+      </div>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <div class="gen" id="genBtn">生成引用</div>
+
+  <div class="res">
+    <div class="res-top">
+      <span class="res-mark dim" id="resMark">[ ]</span>
+      <span class="res-kind" id="resKind">生成后会出现在这里</span>
+      <span class="res-copy" id="copyOneBtn">复制</span>
+    </div>
+    <div class="res-empty" id="resEmpty">上面填完点「生成引用」，标点按国标拼好</div>
+    <div class="res-tx hidden" id="resTx"></div>
+  </div>
+
+  <div class="sec-head">
+    <span class="sec-title">我的文献</span>
+    <span class="sec-op" id="copyAllBtn">复制全部</span>
+  </div>
+  <div class="sec-sub">
+    <span class="sec-count" id="listCount">0/3</span>
+    <span class="sec-sort" id="sortBtn">录入顺序 ↻</span>
+  </div>
+
+  <div class="items" id="items"></div>
+  <div class="list-empty" id="listEmpty">生成过的引用会自动存进来</div>
+  <div class="list-hint hidden" id="listHint">长按删掉一条</div>
+
+  <div class="unlock" id="unlockBox">
+    <div class="unlock-main">解锁文献列表</div>
+    <div class="unlock-sub">看一段激励视频，能存 20 条，够写一整章</div>
+  </div>
+  <div class="unlocked-tip hidden" id="unlockedTip">已解锁：最多存 20 条</div>
+
+  <div class="note">自动处理：作者超三个截断、外文姓前名缩写、页码统一半角短横。</div>
+
+  <div class="footer">只在本地拼，不上传任何内容</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/refs.js"></script>
+<script>
+(function () {
+  var K = window.RefKit;
+
+  var SORT_NEXT = { none: 'year', year: 'author', author: 'none' };
+  var SORT_TEXT = { none: '录入顺序', year: '按年份', author: '按作者' };
+
+  var S = {
+    typeKey: 'J',
+    fields: [],
+    form: {},
+    built: null,
+    list: [],
+    unlocked: false,
+    copied: false,
+    sortBy: 'none'
+  };
+
+  var el = {
+    types: document.getElementById('types'),
+    fhT: document.getElementById('fhT'),
+    rows: document.getElementById('rows'),
+    genBtn: document.getElementById('genBtn'),
+    resMark: document.getElementById('resMark'),
+    resKind: document.getElementById('resKind'),
+    resEmpty: document.getElementById('resEmpty'),
+    resTx: document.getElementById('resTx'),
+    copyOneBtn: document.getElementById('copyOneBtn'),
+    listCount: document.getElementById('listCount'),
+    copyAllBtn: document.getElementById('copyAllBtn'),
+    sortBtn: document.getElementById('sortBtn'),
+    items: document.getElementById('items'),
+    listEmpty: document.getElementById('listEmpty'),
+    listHint: document.getElementById('listHint'),
+    unlockBox: document.getElementById('unlockBox'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    toast: document.getElementById('toast'),
+    sampleBtn: document.getElementById('sampleBtn'),
+    clearBtn: document.getElementById('clearBtn')
+  };
+
+  /* ---------------- 渲染 ---------------- */
+
+  function renderTypes() {
+    el.types.innerHTML = K.TYPES.map(function (t) {
+      return '<div class="tchip' + (t.key === S.typeKey ? ' on' : '') +
+        '" data-k="' + t.key + '">' + t.label + '</div>';
+    }).join('');
+  }
+
+  function renderRows() {
+    el.rows.innerHTML = S.fields.map(function (f) {
+      return '<div class="frow">' +
+        '<span class="flabel">' + f.label + (f.req ? '<span class="req">*</span>' : '') + '</span>' +
+        '<input class="finput" data-k="' + f.key + '" value="' + escapeAttr(S.form[f.key] || '') +
+        '" placeholder="' + escapeAttr(f.ph) + '">' +
+        '</div>';
+    }).join('');
+  }
+
+  function escapeAttr(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var t = K.typeOf(S.typeKey);
+    el.fhT.textContent = t.cn + ' · 填这几格';
+
+    // 结果卡
+    if (S.built) {
+      el.resMark.className = 'res-mark';
+      el.resMark.textContent = S.built.mark;
+      el.resKind.textContent = S.built.cn;
+      el.resTx.textContent = S.built.text;
+      el.resTx.classList.remove('hidden');
+      el.resEmpty.classList.add('hidden');
+    } else {
+      el.resMark.className = 'res-mark dim';
+      el.resMark.textContent = '[ ]';
+      el.resKind.textContent = '生成后会出现在这里';
+      el.resTx.classList.add('hidden');
+      el.resEmpty.classList.remove('hidden');
+    }
+    el.copyOneBtn.className = 'res-copy' + (S.copied ? ' done' : '');
+    el.copyOneBtn.textContent = S.copied ? '已复制' : '复制';
+
+    // 列表
+    var lim = K.limitOf(S.unlocked);
+    el.listCount.textContent = S.list.length + '/' + lim;
+    el.sortBtn.textContent = SORT_TEXT[S.sortBy] + ' ↻';
+    if (S.list.length) {
+      el.items.innerHTML = S.list.map(function (it, i) {
+        return '<div class="item" data-i="' + i + '">' +
+          '<span class="item-no">[' + (i + 1) + ']</span>' +
+          '<span class="item-tx">' + escapeAttr(it.text) + '</span></div>';
+      }).join('');
+      el.items.classList.remove('hidden');
+      el.listEmpty.classList.add('hidden');
+      el.listHint.classList.remove('hidden');
+    } else {
+      el.items.innerHTML = '';
+      el.items.classList.add('hidden');
+      el.listEmpty.classList.remove('hidden');
+      el.listHint.classList.add('hidden');
+    }
+
+    el.unlockBox.classList.toggle('hidden', S.unlocked);
+    el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+
+  function hideToast() {
+    clearTimeout(toastTimer);
+    el.toast.classList.remove('show');
+  }
+
+  /* ---------------- 动作 ---------------- */
+
+  function setType(k) {
+    var t = K.typeOf(k);
+    if (!t) return false;
+    S.typeKey = t.key;
+    S.fields = K.fieldsOf(t.key);
+    S.form = {};
+    S.fields.forEach(function (f) { S.form[f.key] = ''; });
+    S.built = null;
+    S.copied = false;
+    renderTypes();
+    renderRows();
+    render();
+    return true;
+  }
+
+  function setField(k, v) {
+    S.form[k] = v;
+    S.built = null;
+    S.copied = false;
+    var inp = el.rows.querySelector('input[data-k="' + k + '"]');
+    if (inp) inp.value = v;
+    render();
+    return true;
+  }
+
+  function setForm(obj) {
+    Object.keys(obj || {}).forEach(function (k) { S.form[k] = obj[k]; });
+    S.built = null;
+    S.copied = false;
+    renderRows();
+    render();
+    return true;
+  }
+
+  function fillSample() {
+    var s = K.sample(S.typeKey);
+    S.form = {};
+    S.fields.forEach(function (f) { S.form[f.key] = s[f.key] === undefined ? '' : s[f.key]; });
+    S.built = null;
+    S.copied = false;
+    renderRows();
+    render();
+    return true;
+  }
+
+  function clearForm() {
+    S.form = {};
+    S.fields.forEach(function (f) { S.form[f.key] = ''; });
+    S.built = null;
+    S.copied = false;
+    renderRows();
+    render();
+    return true;
+  }
+
+  function generate() {
+    var r = K.build(S.typeKey, S.form);
+    if (!r.ok) { toast(r.message); return false; }
+    S.built = r;
+    S.copied = false;
+    var add = K.addEntry(S.list, r, K.limitOf(S.unlocked));
+    if (add.ok) S.list = add.list;
+    else if (add.code === 'DUP') toast('这条已经存过了');
+    else if (add.code === 'FULL') toast(add.message);
+    render();
+    return true;
+  }
+
+  function copyOne() {
+    if (!S.built) { toast('先生成一条引用'); return false; }
+    S.copied = true;
+    render();
+    toast('已复制 ' + S.built.mark);
+    return true;
+  }
+
+  function copyAll() {
+    if (!S.list.length) { toast('列表还是空的'); return false; }
+    render();
+    toast('已复制 ' + S.list.length + ' 条');
+    return true;
+  }
+
+  function unlock() {
+    S.unlocked = true;
+    render();
+    toast('已解锁，可存 20 条');
+    return true;
+  }
+
+  function sortList() {
+    S.sortBy = SORT_NEXT[S.sortBy] || 'none';
+    S.list = K.sortList(S.list, S.sortBy);
+    render();
+    return S.sortBy;
+  }
+
+  function reset() {
+    S.unlocked = false;
+    S.built = null;
+    S.copied = false;
+    S.list = [];
+    S.sortBy = 'none';
+    setType('J');
+    return true;
+  }
+
+  /* ---------------- 交互 ---------------- */
+
+  el.types.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.tchip') : null;
+    if (n) setType(n.dataset.k);
+  });
+
+  el.rows.addEventListener('input', function (e) {
+    var k = e.target.dataset && e.target.dataset.k;
+    if (!k) return;
+    S.form[k] = e.target.value;
+    S.built = null;
+    S.copied = false;
+    render();
+  });
+
+  el.genBtn.addEventListener('click', generate);
+  el.copyOneBtn.addEventListener('click', copyOne);
+  el.copyAllBtn.addEventListener('click', copyAll);
+  el.sortBtn.addEventListener('click', sortList);
+  el.sampleBtn.addEventListener('click', fillSample);
+  el.clearBtn.addEventListener('click', clearForm);
+  el.unlockBox.addEventListener('click', unlock);
+
+  el.items.addEventListener('contextmenu', function (e) {
+    var n = e.target.closest ? e.target.closest('.item') : null;
+    if (!n) return;
+    e.preventDefault();
+    S.list = K.removeEntry(S.list, parseInt(n.dataset.i, 10));
+    render();
+  });
+
+  /* ---------------- 截图脚本的控制口 ---------------- */
+  window.__ctl = {
+    reset: reset,
+    setType: setType,
+    setField: setField,
+    setForm: setForm,
+    setXxx: setField,          // 兼容系列脚本的通用命名
+    fillSample: fillSample,
+    clearForm: clearForm,
+    generate: generate,
+    copy: copyAll,             // 「复制全部」是主按钮
+    copyOne: copyOne,
+    unlock: unlock,
+    sort: sortList,
+    remove: function (i) { S.list = K.removeEntry(S.list, i); render(); return true; },
+    toast: toast,
+    hideToast: hideToast,
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    focus: function () {},
+    state: function () { return S; }
+  };
+
+  window.SAMPLE_EN = K.sample('J_EN');   // 截图脚本切「英文文献」那一镜用
+
+  setType('J');
+})();
+</script>
+</body>
+</html>
