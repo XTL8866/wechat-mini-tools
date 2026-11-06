@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>转盘抽签 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 预设 */
+  .presets { margin-top: 15px; display: flex; }
+  .pchip {
+    flex: 1; margin-right: 6px; height: 31px; border-radius: 8px;
+    background: #F4F4F6; font-size: 12px; color: #5A5A64;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .pchip:last-child { margin-right: 0; }
+  .pchip.on { background: #FFEFEC; color: #D93A2B; font-weight: 600; }
+
+  /* 选项 */
+  .form { margin-top: 8px; background: #F6F6F8; border-radius: 13px; padding: 2px 14px 0; }
+  .formhead { display: flex; align-items: center; justify-content: space-between; height: 33px; }
+  .fh-t { font-size: 11.5px; color: #B4B4BC; }
+  .fh-btn { font-size: 11.5px; color: #FF4D3D; padding-left: 13px; cursor: pointer; }
+
+  .farea {
+    display: block; width: 100%; height: 120px; border: none; outline: none; resize: none;
+    background: transparent; font-family: inherit; font-size: 13px; line-height: 1.72;
+    color: #101014; padding: 2px 0 4px;
+  }
+  .farea::placeholder { color: #C6C6CE; }
+
+  .ffoot {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 37px; border-top: 1px solid #EDEDF0;
+  }
+  .fstat { font-size: 11px; color: #B4B4BC; }
+  .toggle { display: flex; align-items: center; cursor: pointer; }
+  .tg-dot {
+    width: 15px; height: 15px; border-radius: 50%; border: 1px solid #C6C6CE;
+    background: #FFFFFF; margin-right: 5px;
+  }
+  .toggle.on .tg-dot { border-color: #FF4D3D; background: #FF4D3D; }
+  .tg-t { font-size: 11px; color: #86868E; }
+  .toggle.on .tg-t { color: #FF4D3D; font-weight: 600; }
+
+  /* 主按钮 */
+  .gen {
+    margin-top: 9px; height: 42px; border-radius: 9px; background: #101014;
+    color: #FFFFFF; font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+
+  /* 转盘 */
+  .stage { margin-top: 12px; display: flex; justify-content: center; }
+  .wheel-wrap { position: relative; width: 310px; height: 310px; }
+  .wheel {
+    position: absolute; left: 0; top: 0; width: 310px; height: 310px;
+    border-radius: 50%; background: #EDEDF0;
+  }
+  .wheel.spinning { transition: transform 2.4s cubic-bezier(0.16, 0.72, 0.15, 1); }
+
+  .lab {
+    position: absolute; left: 50%; top: 0; width: 0; height: 155px;
+    transform-origin: 0 100%;
+  }
+  .lab-tx {
+    position: absolute; top: 13px; left: -75px; width: 150px;
+    text-align: center; white-space: nowrap; font-weight: 600; line-height: 1;
+  }
+
+  .pointer {
+    position: absolute; left: 50%; top: -4px; margin-left: -8px;
+    width: 0; height: 0;
+    border-left: 8px solid transparent; border-right: 8px solid transparent;
+    border-top: 15px solid #101014; z-index: 6;
+  }
+
+  .hub {
+    position: absolute; left: 50%; top: 50%; width: 52px; height: 52px;
+    margin: -26px 0 0 -26px; border-radius: 50%;
+    background: #101014; border: 3px solid #FFFFFF; color: #FFFFFF;
+    font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 5; cursor: pointer; user-select: none;
+  }
+
+  .wheel-hint {
+    position: absolute; left: 0; top: 50%; width: 100%; transform: translateY(-50%);
+    text-align: center; font-size: 12px; color: #B4B4BC;
+  }
+
+  /* 结果 */
+  .res { margin-top: 13px; background: #F6F6F8; border-radius: 13px; padding: 11px 13px 12px; }
+  .res-top { display: flex; align-items: baseline; }
+  .res-kind { flex: 1; font-size: 11.5px; color: #86868E; }
+  .res-copy { font-size: 12px; color: #FF4D3D; padding-left: 10px; cursor: pointer; }
+  .res-copy.done { color: #B4B4BC; }
+  .res-tx {
+    margin-top: 5px; font-size: 29px; font-weight: 700; line-height: 1.28;
+    color: #101014; overflow-wrap: break-word; word-break: normal;
+  }
+  .res-empty { padding: 11px 0 6px; font-size: 12px; color: #C6C6CE; }
+  .res-meta { margin-top: 3px; font-size: 11px; color: #B4B4BC; }
+
+  /* 记录 */
+  .sec-head { margin-top: 19px; display: flex; justify-content: space-between; align-items: baseline; }
+  .sec-title { font-size: 12.5px; color: #86868E; }
+  .sec-op { font-size: 12px; font-weight: 600; color: #FF4D3D; cursor: pointer; }
+  .sec-sub { margin-top: 6px; display: flex; justify-content: space-between; align-items: baseline; }
+  .sec-count { font-size: 11px; color: #B4B4BC; }
+  .sec-stat { font-size: 11px; color: #86868E; }
+
+  .items { margin-top: 2px; }
+  .item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #F2F2F4; }
+  .item-no { width: 26px; flex-shrink: 0; font-size: 11.5px; color: #B4B4BC; font-variant-numeric: tabular-nums; }
+  .item-tx { flex: 1; font-size: 13px; color: #26262C; }
+  .item-t { font-size: 11px; color: #C6C6CE; font-variant-numeric: tabular-nums; }
+
+  .list-empty {
+    margin-top: 8px; padding: 20px 0; text-align: center; font-size: 11.5px;
+    color: #C6C6CE; background: #FAFAFB; border-radius: 10px;
+  }
+  .list-hint { margin-top: 7px; font-size: 10.5px; color: #C6C6CE; }
+
+  /* 解锁 */
+  .unlock { margin-top: 17px; background: #FFF3F1; border-radius: 11px; padding: 13px 14px; cursor: pointer; }
+  .unlock-main { font-size: 14.5px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 11.5px; color: #C4746A; }
+  .unlocked-tip { margin-top: 17px; font-size: 11.5px; color: #B4B4BC; text-align: center; }
+
+  .note { margin-top: 19px; font-size: 10.5px; color: #B4B4BC; line-height: 1.85; }
+  .footer { margin-top: 13px; text-align: center; font-size: 10.5px; color: #C6C6CE; line-height: 1.6; }
+
+  /* toast：合成层会自己画一个，这里只是浏览器里点着有反馈 */
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">转盘抽签</div>
+    <div class="sub">选项写进去，转一下就有答案</div>
+  </div>
+
+  <div class="presets" id="presets"></div>
+
+  <div class="form">
+    <div class="formhead">
+      <span class="fh-t">一行一个选项</span>
+      <div class="fh-a"><span class="fh-btn" id="clearBtn">清空</span></div>
+    </div>
+    <textarea class="farea" id="farea" placeholder="火锅&#10;烧烤&#10;日料" maxlength="600"></textarea>
+    <div class="ffoot">
+      <span class="fstat" id="fstat">一行一个，最多 12 个</span>
+      <div class="toggle" id="toggle">
+        <div class="tg-dot"></div><span class="tg-t">不放回</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="gen" id="genBtn">开始转</div>
+
+  <div class="stage">
+    <div class="wheel-wrap">
+      <div class="pointer hidden" id="pointer"></div>
+      <div class="wheel" id="wheel"></div>
+      <div class="hub hidden" id="hub">转</div>
+      <div class="wheel-hint" id="wheelHint">先写两个以上的选项</div>
+    </div>
+  </div>
+
+  <div class="res">
+    <div class="res-top">
+      <span class="res-kind" id="resKind">还没转</span>
+      <span class="res-copy" id="copyBtn">复制</span>
+    </div>
+    <div class="res-tx hidden" id="resTx"></div>
+    <div class="res-empty" id="resEmpty">写几个选项，按一下中间的「转」</div>
+    <div class="res-meta hidden" id="resMeta"></div>
+  </div>
+
+  <div class="sec-head">
+    <span class="sec-title">抽签记录</span>
+    <span class="sec-op" id="copyAllBtn">复制全部</span>
+  </div>
+  <div class="sec-sub">
+    <span class="sec-count" id="listCount">0/5</span>
+    <span class="sec-stat" id="statLine">还没有记录</span>
+  </div>
+
+  <div class="items hidden" id="items"></div>
+  <div class="list-empty" id="listEmpty">转出来的结果会自动记在这儿</div>
+  <div class="list-hint hidden" id="listHint">长按删掉一条</div>
+
+  <div class="unlock" id="unlockBox">
+    <div class="unlock-main">解锁记录本</div>
+    <div class="unlock-sub">看一段激励视频，能存 60 条，还能看谁中得多</div>
+  </div>
+  <div class="unlocked-tip hidden" id="unlockedTip">已解锁：最多存 60 条</div>
+
+  <div class="note">真转不是假转：扇区按选项数等分，停在哪一格由落点角度算出来，转完还会回读一次校验。</div>
+
+  <div class="footer">只在本地算，不上传任何内容</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/wheel.js"></script>
+<script>
+(function () {
+  var K = window.WheelKit;
+
+  var S = {
+    text: '',
+    options: [],
+    labs: [],
+    rotation: 0,
+    spinning: false,
+    noRepeat: false,
+    round: 1,
+    built: null,
+    metaText: '',
+    copied: false,
+    history: [],
+    unlocked: false,
+    turns: 4
+  };
+
+  var el = {
+    presets: document.getElementById('presets'),
+    farea: document.getElementById('farea'),
+    fstat: document.getElementById('fstat'),
+    toggle: document.getElementById('toggle'),
+    genBtn: document.getElementById('genBtn'),
+    wheel: document.getElementById('wheel'),
+    hub: document.getElementById('hub'),
+    pointer: document.getElementById('pointer'),
+    wheelHint: document.getElementById('wheelHint'),
+    resKind: document.getElementById('resKind'),
+    resTx: document.getElementById('resTx'),
+    resEmpty: document.getElementById('resEmpty'),
+    resMeta: document.getElementById('resMeta'),
+    copyBtn: document.getElementById('copyBtn'),
+    copyAllBtn: document.getElementById('copyAllBtn'),
+    listCount: document.getElementById('listCount'),
+    statLine: document.getElementById('statLine'),
+    items: document.getElementById('items'),
+    listEmpty: document.getElementById('listEmpty'),
+    listHint: document.getElementById('listHint'),
+    unlockBox: document.getElementById('unlockBox'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    clearBtn: document.getElementById('clearBtn'),
+    toast: document.getElementById('toast')
+  };
+
+  /* ---------------- 渲染 ---------------- */
+
+  function renderPresets() {
+    el.presets.innerHTML = K.PRESETS.map(function (p) {
+      return '<div class="pchip" data-k="' + p.key + '">' + p.label + '</div>';
+    }).join('');
+  }
+
+  function renderWheel() {
+    var L = K.layout(S.options.length);
+    el.wheel.style.background = K.conicCss(S.options.length);
+    el.wheel.style.transform = 'rotate(' + S.rotation + 'deg)';
+
+    if (!L) {
+      el.wheel.innerHTML = '';
+      el.hub.classList.add('hidden');
+      el.pointer.classList.add('hidden');
+      el.wheelHint.classList.remove('hidden');
+      return;
+    }
+    el.hub.classList.remove('hidden');
+    el.pointer.classList.remove('hidden');
+    el.wheelHint.classList.add('hidden');
+
+    el.wheel.innerHTML = L.segs.map(function (s) {
+      return '<div class="lab" style="transform: rotate(' + s.mid + 'deg)">' +
+        '<div class="lab-tx" style="color:' + s.ink + ';font-size:' + s.fontSize + 'px;' +
+        (s.flip ? 'transform:rotate(180deg);' : '') + '">' +
+        escapeHtml(K.wheelLabel(S.options[s.i], s.textMax)) + '</div></div>';
+    }).join('');
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    el.genBtn.textContent = S.history.length ? '再转一次' : '开始转';
+
+    if (S.built) {
+      el.resKind.textContent = '这一转';
+      el.resTx.textContent = S.built.label;
+      el.resTx.classList.remove('hidden');
+      el.resEmpty.classList.add('hidden');
+      el.resMeta.textContent = S.metaText;
+      el.resMeta.classList.remove('hidden');
+    } else {
+      el.resKind.textContent = '还没转';
+      el.resTx.classList.add('hidden');
+      el.resEmpty.classList.remove('hidden');
+      el.resMeta.classList.add('hidden');
+    }
+    el.copyBtn.className = 'res-copy' + (S.copied ? ' done' : '');
+    el.copyBtn.textContent = S.copied ? '已复制' : '复制';
+
+    el.listCount.textContent = S.history.length + '/' + K.limitOf(S.unlocked);
+    var c = K.counts(S.history);
+    el.statLine.textContent = c.slice(0, 2).map(function (x) {
+      return x.label + ' ' + x.n;
+    }).join(' · ') || '还没有记录';
+
+    if (S.history.length) {
+      el.items.innerHTML = S.history.map(function (it, i) {
+        return '<div class="item" data-i="' + i + '">' +
+          '<span class="item-no">' + (i + 1) + '</span>' +
+          '<span class="item-tx">' + escapeHtml(it.label) + '</span>' +
+          '<span class="item-t">' + escapeHtml(it.t || '') + '</span></div>';
+      }).join('');
+      el.items.classList.remove('hidden');
+      el.listEmpty.classList.add('hidden');
+      el.listHint.classList.remove('hidden');
+    } else {
+      el.items.innerHTML = '';
+      el.items.classList.add('hidden');
+      el.listEmpty.classList.remove('hidden');
+      el.listHint.classList.add('hidden');
+    }
+
+    el.unlockBox.classList.toggle('hidden', S.unlocked);
+    el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+    el.toggle.classList.toggle('on', S.noRepeat);
+  }
+
+  function parse() {
+    var p = K.parseOptions(S.text);
+    S.options = p.ok ? p.options : (p.options || []);
+    el.fstat.textContent = p.ok
+      ? S.options.length + ' 个选项' + (p.dropped.dup ? ' · 去掉 ' + p.dropped.dup + ' 个重复' : '')
+      : p.message;
+    return p;
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+  function hideToast() {
+    clearTimeout(toastTimer);
+    el.toast.classList.remove('show');
+  }
+
+  /* ---------------- 动作 ---------------- */
+
+  function setText(t) {
+    S.text = String(t == null ? '' : t);
+    el.farea.value = S.text;
+    S.built = null;
+    S.copied = false;
+    parse();
+    renderWheel();
+    render();
+    return true;
+  }
+
+  function setPreset(k) {
+    return setText(K.presetText(k));
+  }
+
+  function setNoRepeat(v) {
+    S.noRepeat = !!v;
+    render();
+    return S.noRepeat;
+  }
+
+  function setRotation(deg) {
+    S.rotation = Number(deg) || 0;
+    el.wheel.classList.remove('spinning');
+    el.wheel.style.transform = 'rotate(' + S.rotation + 'deg)';
+    return S.rotation;
+  }
+
+  /** 把一次抽签的结果落到界面上（不带动画）。截图的「停稳」那一帧用它。 */
+  function settle(r) {
+    var max = K.limitOf(S.unlocked);
+    var item = { label: r.label, round: S.noRepeat ? r.turn : 1, t: nowHM() };
+    S.history = K.historyAdd(S.history, item, max);
+    S.round = S.noRepeat ? r.turn : 1;
+    S.built = { label: r.label, index: r.index, turn: r.turn };
+    S.copied = false;
+    var left = K.poolOf({
+      options: S.options, history: S.history, noRepeat: S.noRepeat, round: S.round
+    });
+    S.metaText = S.noRepeat
+      ? '第 ' + r.turn + ' 轮 · 还剩 ' + left.left + ' 个'
+      : '第 ' + S.history.length + ' 次 · ' + S.options.length + ' 个选项';
+    S.rotation = r.to;
+    el.wheel.classList.remove('spinning');
+    renderWheel();
+    render();
+    return true;
+  }
+
+  /** 一步到位：算落点 + 直接落位，用于截图脚本。 */
+  function generate(rand) {
+    var p = parse();
+    if (!p.ok) { toast(p.message); return false; }
+    var r = K.spin({
+      options: S.options, rotation: S.rotation, history: S.history,
+      noRepeat: S.noRepeat, round: S.round, turns: S.turns
+    }, rand === undefined ? Math.random : rand);
+    if (!r.ok) { toast(r.message); return false; }
+    return settle(r);
+  }
+
+  /** 带动画的转：页面上点「转」走这条。 */
+  function spinAnimated(rand) {
+    if (S.spinning) return false;
+    var p = parse();
+    if (!p.ok) { toast(p.message); return false; }
+    var r = K.spin({
+      options: S.options, rotation: S.rotation, history: S.history,
+      noRepeat: S.noRepeat, round: S.round, turns: S.turns
+    }, rand === undefined ? Math.random : rand);
+    if (!r.ok) { toast(r.message); return false; }
+    S.spinning = true;
+    S.built = null;
+    S.copied = false;
+    render();
+    el.wheel.classList.add('spinning');
+    // 强制一次重排，否则同一个 tick 里改 transition 和 transform 会不生效
+    void el.wheel.offsetWidth;
+    el.wheel.style.transform = 'rotate(' + r.to + 'deg)';
+    setTimeout(function () {
+      S.spinning = false;
+      settle(r);
+    }, K.LIMITS.SPIN_MS + 60);
+    return true;
+  }
+
+  function copy() {
+    if (!S.built) { toast('先转一次'); return false; }
+    S.copied = true;
+    render();
+    toast('已复制 ' + S.built.label);
+    return true;
+  }
+
+  function copyAll() {
+    if (!S.history.length) { toast('还没有记录'); return false; }
+    toast('已复制 ' + S.history.length + ' 条');
+    return true;
+  }
+
+  function unlock() {
+    S.unlocked = true;
+    render();
+    toast('已解锁，可存 60 条');
+    return true;
+  }
+
+  function reset() {
+    S.history = [];
+    S.unlocked = false;
+    S.round = 1;
+    S.noRepeat = false;
+    setRotation(0);
+    setText('');
+    return true;
+  }
+
+  function nowHM() {
+    var d = new Date();
+    var p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  /* ---------------- 交互 ---------------- */
+
+  el.farea.addEventListener('input', function (e) {
+    setText(e.target.value);
+  });
+  el.presets.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.pchip') : null;
+    if (n) setPreset(n.dataset.k);
+  });
+  el.toggle.addEventListener('click', function () { setNoRepeat(!S.noRepeat); });
+  el.genBtn.addEventListener('click', function () { spinAnimated(); });
+  el.hub.addEventListener('click', function () { spinAnimated(); });
+  el.copyBtn.addEventListener('click', copy);
+  el.copyAllBtn.addEventListener('click', copyAll);
+  el.unlockBox.addEventListener('click', unlock);
+  el.clearBtn.addEventListener('click', function () { setText(''); });
+  el.items.addEventListener('contextmenu', function (e) {
+    var n = e.target.closest ? e.target.closest('.item') : null;
+    if (!n) return;
+    e.preventDefault();
+    S.history = K.removeAt(S.history, parseInt(n.dataset.i, 10));
+    render();
+  });
+
+  /* ---------------- 截图脚本的控制口 ---------------- */
+  window.__ctl = {
+    reset: reset,
+    setText: setText,
+    setXxx: setText,          // 系列脚本的通用命名
+    setPreset: setPreset,
+    setNoRepeat: setNoRepeat,
+    setTurns: function (n) { S.turns = Math.max(0, Math.floor(n) || 0); return S.turns; },
+    setRotation: setRotation,
+    generate: generate,
+    spin: spinAnimated,
+    copy: copy,
+    copyAll: copyAll,
+    unlock: unlock,
+    remove: function (i) { S.history = K.removeAt(S.history, i); render(); return true; },
+    toast: toast,
+    hideToast: hideToast,
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    state: function () { return S; }
+  };
+
+  renderPresets();
+  setText('');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">转盘抽签</view>
+    <view class="sub">选项写进去，转一下就有答案</view>
+  </view>
+
+  <!-- 预设 -->
+  <view class="presets">
+    <view
+      wx:for="{{presets}}"
+      wx:key="key"
+      class="pchip"
+      data-k="{{item.key}}"
+      bindtap="onPreset"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 选项 -->
+  <view class="form">
+    <view class="formhead">
+      <text class="fh-t">一行一个选项</text>
+      <view class="fh-a">
+        <text class="fh-btn" bindtap="onClear">清空</text>
+      </view>
+    </view>
+    <textarea
+      class="farea"
+      value="{{text}}"
+      placeholder="火锅&#10;烧烤&#10;日料"
+      placeholder-class="fph"
+      bindinput="onInput"
+      maxlength="600"
+      show-confirm-bar="{{false}}"
+      cursor-spacing="24"
+    />
+    <view class="ffoot">
+      <text class="fstat">{{statText}}</text>
+      <view class="toggle {{noRepeat ? 'on' : ''}}" bindtap="onToggle">
+        <view class="tg-dot"></view>
+        <text class="tg-t">不放回</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="gen" bindtap="onSpin">{{history.length ? '再转一次' : '开始转'}}</view>
+
+  <!-- 转盘 -->
+  <view class="stage">
+    <view class="wheel-wrap">
+      <view wx:if="{{!wheelEmpty}}" class="pointer"></view>
+      <view class="wheel {{spinning ? 'spinning' : ''}}" style="transform: rotate({{rotation}}deg); background: {{wheelCss}};">
+        <view wx:for="{{labs}}" wx:key="i" class="lab" style="transform: rotate({{item.mid}}deg);">
+          <view
+            class="lab-tx"
+            style="color: {{item.ink}}; font-size: {{item.fs}}px; {{item.flip ? 'transform: rotate(180deg);' : ''}}"
+          >{{item.text}}</view>
+        </view>
+        <view wx:if="{{wheelEmpty}}" class="wheel-hint">先写两个以上的选项</view>
+      </view>
+      <view wx:if="{{!wheelEmpty}}" class="hub" bindtap="onSpin">转</view>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view class="res">
+    <view class="res-top">
+      <text class="res-kind">{{built ? '这一转' : '还没转'}}</text>
+      <text class="res-copy {{copied ? 'done' : ''}}" bindtap="onCopy">{{copied ? '已复制' : '复制'}}</text>
+    </view>
+    <view wx:if="{{built}}" class="res-tx">{{built.label}}</view>
+    <view wx:else class="res-empty">写几个选项，按一下中间的「转」</view>
+    <view wx:if="{{built}}" class="res-meta">{{metaText}}</view>
+  </view>
+
+  <!-- 记录 -->
+  <view class="sec-head">
+    <text class="sec-title">抽签记录</text>
+    <text class="sec-op" bindtap="onCopyAll">复制全部</text>
+  </view>
+  <view class="sec-sub">
+    <text class="sec-count">{{history.length}}/{{limit}}</text>
+    <text class="sec-stat">{{statLine}}</text>
+  </view>
+
+  <view wx:if="{{history.length}}" class="items">
+    <view
+      wx:for="{{history}}"
+      wx:key="index"
+      class="item"
+      data-i="{{index}}"
+      bindlongpress="onRemove"
+    >
+      <text class="item-no">{{index + 1}}</text>
+      <text class="item-tx">{{item.label}}</text>
+      <text class="item-t">{{item.t}}</text>
+    </view>
+  </view>
+  <view wx:else class="list-empty">转出来的结果会自动记在这儿</view>
+  <view wx:if="{{history.length}}" class="list-hint">长按删掉一条</view>
+
+  <!-- 解锁 -->
+  <view wx:if="{{!unlocked}}" class="unlock" bindtap="onUnlock">
+    <view class="unlock-main">解锁记录本</view>
+    <view class="unlock-sub">看一段激励视频，能存 60 条，还能看谁中得多</view>
+  </view>
+  <view wx:else class="unlocked-tip">已解锁：最多存 60 条</view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="note">真转不是假转：扇区按选项数等分，停在哪一格由落点角度算出来，转完还会回读一次校验。</view>
+
+  <view class="footer">只在本地算，不上传任何内容</view>
+</view>
