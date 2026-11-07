@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>音标查询 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 输入 */
+  .form { margin-top: 14px; background: #F6F6F8; border-radius: 13px; padding: 2px 14px 0; }
+  .formhead { display: flex; align-items: center; justify-content: space-between; height: 31px; }
+  .fh-t { font-size: 11.5px; color: #B4B4BC; }
+  .fh-btn { font-size: 11.5px; color: #FF4D3D; padding-left: 13px; cursor: pointer; }
+
+  .farea {
+    display: block; width: 100%; height: 92px; border: none; outline: none; resize: none;
+    background: transparent; font-family: inherit; font-size: 15px; line-height: 1.62;
+    color: #101014; padding: 2px 0 4px; font-weight: 600;
+  }
+  .farea::placeholder { color: #C6C6CE; font-weight: 400; }
+
+  .ffoot {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 33px; border-top: 1px solid #EDEDF0;
+  }
+  .fstat { font-size: 11px; color: #B4B4BC; }
+  .fstat.warn { color: #D93A2B; }
+
+  /* 分段控件 */
+  .seg { margin-top: 13px; display: flex; background: #F1F1F4; border-radius: 999px; padding: 3px; }
+  .seg-item {
+    flex: 1; text-align: center; font-size: 12.5px; color: #6C6C76;
+    padding: 7px 0; border-radius: 999px; cursor: pointer;
+  }
+  .seg-item.on {
+    background: #FFFFFF; color: #101014; font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+  .hint { margin-top: 6px; font-size: 11px; color: #B4B4BC; }
+
+  /* 示例词 */
+  .chips { margin-top: 13px; display: flex; }
+  .chip {
+    margin-right: 8px; padding: 6px 16px; border-radius: 999px;
+    border: 1px solid #E6E6EA; font-size: 12.5px; color: #3A3A42; cursor: pointer;
+  }
+  .chip:last-child { margin-right: 0; }
+  .chip.on { background: #101014; border-color: #101014; color: #FFFFFF; font-weight: 600; }
+
+  /* 主按钮 */
+  .gen {
+    margin-top: 14px; height: 42px; border-radius: 9px; background: #FF4D3D;
+    color: #FFFFFF; font-size: 14.5px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+
+  /* 结果卡 */
+  .res { margin-top: 17px; }
+  .res-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .res-title { font-size: 12.5px; color: #86868E; }
+  .res-count { font-size: 11px; color: #B4B4BC; }
+
+  .card { padding: 13px 0 12px; border-bottom: 1px solid #F1F1F4; }
+  .card-top { display: flex; align-items: baseline; }
+  .card-w { font-size: 21px; font-weight: 700; letter-spacing: -0.2px; }
+  .card-form { margin-left: 7px; font-size: 10.5px; color: #B4B4BC; }
+  .card-copy { margin-left: auto; font-size: 12px; color: #FF4D3D; cursor: pointer; padding-left: 12px; }
+  .card-copy.done { color: #B4B4BC; }
+
+  .card-ipa {
+    margin-top: 5px; font-size: 21px; font-weight: 500; color: #101014;
+    font-family: "Segoe UI", "Lucida Sans Unicode", Arial, sans-serif;
+    letter-spacing: 0.2px; overflow-wrap: break-word; word-break: normal;
+  }
+  .ipa-sub { color: #86868E; font-size: 18px; }
+
+  .card-mean { margin-top: 6px; font-size: 13px; line-height: 1.55; color: #26262C; }
+  .card-meta { margin-top: 6px; font-size: 11px; color: #B4B4BC; }
+  .card-syl {
+    margin-top: 4px; font-size: 13px; color: #6C6C76;
+    font-family: "Segoe UI", "Lucida Sans Unicode", Arial, sans-serif;
+  }
+  .card-tag {
+    display: inline-block; margin-right: 6px; padding: 1px 6px; border-radius: 4px;
+    background: #FFF4E0; color: #B26A00; font-size: 10px;
+  }
+  .card-tag.gray { background: #F2F2F4; color: #86868E; }
+
+  /* 记录 */
+  .sec-head { margin-top: 20px; display: flex; justify-content: space-between; align-items: baseline; }
+  .sec-title { font-size: 12.5px; color: #86868E; }
+  .sec-count { font-size: 11px; color: #B4B4BC; }
+  .sec-op { font-size: 12px; font-weight: 600; color: #FF4D3D; cursor: pointer; }
+
+  .items { margin-top: 4px; }
+  .item { display: flex; align-items: center; padding: 9px 0; border-bottom: 1px solid #F2F2F4; }
+  .item-w { width: 118px; flex-shrink: 0; font-size: 13px; color: #26262C; font-weight: 500; }
+  .item-ipa {
+    flex: 1; font-size: 12px; color: #86868E;
+    font-family: "Segoe UI", "Lucida Sans Unicode", Arial, sans-serif;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .item-t { font-size: 10.5px; color: #C6C6CE; padding-left: 8px; font-variant-numeric: tabular-nums; }
+
+  .list-empty {
+    margin-top: 8px; padding: 18px 0; text-align: center; font-size: 11.5px;
+    color: #C6C6CE; background: #FAFAFB; border-radius: 10px;
+  }
+  .list-hint { margin-top: 7px; font-size: 10.5px; color: #C6C6CE; }
+
+  /* 解锁 */
+  .unlock { margin-top: 17px; background: #FFF3F1; border-radius: 11px; padding: 13px 14px; cursor: pointer; }
+  .unlock-main { font-size: 14.5px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 11.5px; color: #C4746A; }
+  .unlocked-tip { margin-top: 17px; font-size: 11.5px; color: #B4B4BC; text-align: center; }
+
+  .note { margin-top: 19px; font-size: 10.5px; color: #B4B4BC; line-height: 1.85; }
+  .footer { margin-top: 13px; text-align: center; font-size: 10.5px; color: #C6C6CE; }
+
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">音标查询</div>
+    <div class="sub">输单词，音标、音节、重音、释义一次给全</div>
+  </div>
+
+  <div class="form">
+    <div class="formhead">
+      <span class="fh-t">一行一个单词</span>
+      <div class="fh-a"><span class="fh-btn" id="clearBtn">清空</span></div>
+    </div>
+    <textarea class="farea" id="farea" placeholder="schedule&#10;thorough&#10;environment" maxlength="400"></textarea>
+    <div class="ffoot">
+      <span class="fstat" id="fstat">一次最多 3 个</span>
+      <span class="fstat" id="fstate">上限 3 个</span>
+    </div>
+  </div>
+
+  <div class="seg" id="seg"></div>
+  <div class="hint" id="seghint">英式音标（RP）</div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="gen" id="genBtn">查询音标</div>
+
+  <div class="res">
+    <div class="res-head">
+      <span class="res-title" id="resTitle">查询结果</span>
+      <span class="res-count" id="resCount"></span>
+    </div>
+    <div id="cards"></div>
+    <div class="list-empty" id="resEmpty">输入单词，按下查询</div>
+  </div>
+
+  <div class="sec-head">
+    <span class="sec-title">最近查过</span>
+    <span class="sec-op" id="copyAllBtn">复制全部</span>
+  </div>
+  <div class="sec-count" id="listCount" style="margin-top:6px">0/5</div>
+
+  <div class="items hidden" id="items"></div>
+  <div class="list-empty" id="listEmpty">查过的词会自动记在这儿</div>
+  <div class="list-hint hidden" id="listHint">长按删掉一条</div>
+
+  <div class="unlock" id="unlockBox">
+    <div class="unlock-main">解锁一次查 12 个</div>
+    <div class="unlock-sub">看一段激励视频，还能把记录本扩到 60 条</div>
+  </div>
+  <div class="unlocked-tip hidden" id="unlockedTip">已解锁：一次 12 个，记录 60 条</div>
+
+  <div class="note">音节数和重音位置不是写死的，是从音标本身算出来的；词库没收录的词会明确标成「推算」。</div>
+
+  <div class="footer">只在本地算，不上传任何内容</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/phonetic.js"></script>
+<script>
+(function () {
+  var K = window.Phonetic;
+
+  var S = {
+    text: '',
+    accent: 'both',
+    entries: [],
+    copied: -1,
+    history: [],
+    unlocked: false,
+    sample: '',
+    lastWarn: ''
+  };
+
+  var el = {
+    farea: document.getElementById('farea'),
+    fstat: document.getElementById('fstat'),
+    fstate: document.getElementById('fstate'),
+    seg: document.getElementById('seg'),
+    seghint: document.getElementById('seghint'),
+    chips: document.getElementById('chips'),
+    genBtn: document.getElementById('genBtn'),
+    cards: document.getElementById('cards'),
+    resEmpty: document.getElementById('resEmpty'),
+    resCount: document.getElementById('resCount'),
+    resTitle: document.getElementById('resTitle'),
+    listCount: document.getElementById('listCount'),
+    items: document.getElementById('items'),
+    listEmpty: document.getElementById('listEmpty'),
+    listHint: document.getElementById('listHint'),
+    unlockBox: document.getElementById('unlockBox'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    clearBtn: document.getElementById('clearBtn'),
+    copyAllBtn: document.getElementById('copyAllBtn'),
+    toast: document.getElementById('toast')
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function batchLimit() {
+    return S.unlocked ? K.MAX_BATCH : K.FREE_BATCH;
+  }
+
+  /* ---------------- 渲染 ---------------- */
+
+  function renderSeg() {
+    el.seg.innerHTML = K.ACCENTS.map(function (a) {
+      return '<div class="seg-item' + (a.id === S.accent ? ' on' : '') +
+        '" data-k="' + a.id + '">' + a.name + '</div>';
+    }).join('');
+    var cur = K.ACCENTS.filter(function (a) { return a.id === S.accent; })[0];
+    el.seghint.textContent = cur ? cur.hint : '';
+  }
+
+  function renderChips() {
+    el.chips.innerHTML = K.SAMPLES.map(function (s) {
+      return '<div class="chip' + (s.key === S.sample ? ' on' : '') +
+        '" data-k="' + s.key + '">' + s.name + '</div>';
+    }).join('');
+  }
+
+  function ipaHtml(e) {
+    if (e.same) return esc(e.uk);
+    if (S.accent === 'uk') return esc(e.uk);
+    if (S.accent === 'us') return esc(e.us);
+    return esc(e.uk) + '<span class="ipa-sub"> / ' + esc(e.us) + '</span>';
+  }
+
+  function cardHtml(e, i) {
+    var tags = '';
+    if (!e.found) tags += '<span class="card-tag">推算</span>';
+    if (e.form) tags += '<span class="card-tag gray">' + esc(e.form) + '</span>';
+
+    var meta = e.nSyl + ' 个音节 · 重音在第 ' + e.stress.index + ' 个 · ' + e.letters + ' 个字母';
+    if (!e.found) meta += ' · 词库未收录';
+    if (S.accent === 'both' && !e.same) meta += ' · 英 / 美两套';
+
+    var sug = '';
+    if (e.suggest && e.suggest.length) {
+      sug = '<div class="card-meta">是不是想查：' + e.suggest.slice(0, 3).map(esc).join(' / ') + '</div>';
+    }
+
+    return '<div class="card" data-i="' + i + '">' +
+      '<div class="card-top">' +
+        '<span class="card-w">' + esc(e.word) + '</span>' +
+        (e.form ? '<span class="card-form">← ' + esc(e.base) + '</span>' : '') +
+        '<span class="card-copy' + (S.copied === i ? ' done' : '') + '" data-copy="' + i + '">' +
+          (S.copied === i ? '已复制' : '复制') + '</span>' +
+      '</div>' +
+      '<div class="card-ipa">' + ipaHtml(e) + '</div>' +
+      '<div class="card-mean">' + tags + esc(e.pos) + ' ' + esc(e.mean) + '</div>' +
+      '<div class="card-meta">' + meta + '</div>' +
+      '<div class="card-syl">' + esc(K.sylText(e, S.accent === 'us' ? 'us' : 'uk')) + '</div>' +
+      sug +
+    '</div>';
+  }
+
+  function render() {
+    var n = S.entries.length;
+    el.resCount.textContent = n ? n + ' 个词' : '';
+    el.resTitle.textContent = n ? '查询结果' : '查询结果';
+    el.genBtn.textContent = n ? '再查一次' : '查询音标';
+
+    if (n) {
+      el.cards.innerHTML = S.entries.map(cardHtml).join('');
+      el.resEmpty.classList.add('hidden');
+    } else {
+      el.cards.innerHTML = '';
+      el.resEmpty.classList.remove('hidden');
+    }
+
+    el.listCount.textContent = S.history.length + '/' + K.limitOf(S.unlocked);
+    if (S.history.length) {
+      el.items.innerHTML = S.history.map(function (it, i) {
+        return '<div class="item" data-i="' + i + '">' +
+          '<span class="item-w">' + esc(it.word) + '</span>' +
+          '<span class="item-ipa">' + esc(it.ipa) + '</span>' +
+          '<span class="item-t">' + esc(it.t || '') + '</span></div>';
+      }).join('');
+      el.items.classList.remove('hidden');
+      el.listEmpty.classList.add('hidden');
+      el.listHint.classList.remove('hidden');
+    } else {
+      el.items.innerHTML = '';
+      el.items.classList.add('hidden');
+      el.listEmpty.classList.remove('hidden');
+      el.listHint.classList.add('hidden');
+    }
+
+    el.unlockBox.classList.toggle('hidden', S.unlocked);
+    el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+  }
+
+  function parse() {
+    var p = K.parseInput(S.text, batchLimit());
+    if (p.ok) {
+      el.fstat.textContent = p.words.length + ' 个词' +
+        (p.dropped.dup ? ' · 去掉 ' + p.dropped.dup + ' 个重复' : '');
+      el.fstat.classList.remove('warn');
+    } else {
+      el.fstat.textContent = p.message;
+      el.fstat.classList.add('warn');
+    }
+    el.fstate.textContent = '上限 ' + batchLimit() + ' 个';
+    return p;
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+  function hideToast() {
+    clearTimeout(toastTimer);
+    el.toast.classList.remove('show');
+  }
+
+  function nowHM() {
+    var d = new Date();
+    var p = function (x) { return (x < 10 ? '0' : '') + x; };
+    return p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  /* ---------------- 动作 ---------------- */
+
+  function setText(t) {
+    S.text = String(t == null ? '' : t);
+    el.farea.value = S.text;
+    S.entries = [];
+    S.copied = -1;
+    S.sample = '';
+    renderChips();
+    parse();
+    render();
+    return true;
+  }
+
+  function setAccent(k) {
+    S.accent = k || 'both';
+    renderSeg();
+    render();
+    return S.accent;
+  }
+
+  function setPreset(k) {
+    S.sample = k;
+    var txt = K.sampleText(k);
+    S.text = txt;
+    el.farea.value = txt;
+    renderChips();
+    parse();
+    return generate();
+  }
+
+  /** 查询并落库：结果卡 + 记录，都不带动画，截图脚本直接调。 */
+  function generate() {
+    var p = parse();
+    if (!p.ok) { toast(p.message); return false; }
+    var r = K.batch(S.text, batchLimit());
+    if (!r.ok) { toast(r.message); return false; }
+    S.entries = r.list;
+    S.copied = -1;
+    var cap = K.limitOf(S.unlocked);
+    var hist = S.history.slice();
+    for (var i = 0; i < r.list.length; i++) {
+      var e = r.list[i];
+      hist = K.historyAdd(hist, { word: e.word, ipa: K.ipaOf(e, 'us'), t: nowHM() }, cap);
+    }
+    S.history = hist;
+    render();
+    if (r.warning) toast(r.warning);
+    return true;
+  }
+
+  function copy(i) {
+    var idx = (i === undefined || i === null) ? 0 : i;
+    var e = S.entries[idx];
+    if (!e) { toast('先查一个词'); return false; }
+    S.copied = idx;
+    render();
+    toast('已复制 ' + e.word);
+    return true;
+  }
+
+  function copyAll() {
+    if (!S.history.length) { toast('还没有记录'); return false; }
+    toast('已复制 ' + S.history.length + ' 条');
+    return true;
+  }
+
+  function unlock() {
+    S.unlocked = true;
+    render();
+    parse();
+    toast('已解锁，一次查 12 个');
+    return true;
+  }
+
+  function remove(i) {
+    S.history = K.removeAt(S.history, i);
+    render();
+    return true;
+  }
+
+  function reset() {
+    S.history = [];
+    S.unlocked = false;
+    S.accent = 'both';
+    S.entries = [];
+    S.copied = -1;
+    renderSeg();
+    setText('');
+    return true;
+  }
+
+  /* ---------------- 交互 ---------------- */
+
+  el.farea.addEventListener('input', function (e) { setText(e.target.value); });
+  el.seg.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.seg-item') : null;
+    if (n) { setAccent(n.dataset.k); }
+  });
+  el.chips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (n) { setPreset(n.dataset.k); }
+  });
+  el.genBtn.addEventListener('click', function () { generate(); });
+  el.clearBtn.addEventListener('click', function () { setText(''); });
+  el.unlockBox.addEventListener('click', unlock);
+  el.copyAllBtn.addEventListener('click', copyAll);
+  el.cards.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.card-copy') : null;
+    if (n) copy(parseInt(n.dataset.copy, 10));
+  });
+  el.items.addEventListener('contextmenu', function (e) {
+    var n = e.target.closest ? e.target.closest('.item') : null;
+    if (!n) return;
+    e.preventDefault();
+    remove(parseInt(n.dataset.i, 10));
+  });
+
+  /* ---------------- 截图脚本的控制口 ---------------- */
+  window.__ctl = {
+    reset: reset,
+    setText: setText,
+    setXxx: setText,
+    setAccent: setAccent,
+    setPreset: setPreset,
+    generate: generate,
+    copy: copy,
+    copyAll: copyAll,
+    unlock: unlock,
+    remove: remove,
+    toast: toast,
+    hideToast: hideToast,
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    state: function () { return S; }
+  };
+
+  renderSeg();
+  renderChips();
+  setText('');
+})();
+</script>
+</body>
+</html>

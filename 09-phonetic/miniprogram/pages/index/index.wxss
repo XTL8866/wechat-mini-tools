@@ -1,0 +1,372 @@
+.page {
+  padding: 24rpx 32rpx 60rpx;
+}
+
+/* ---------- 顶部 ---------- */
+.hero {
+  padding-top: 16rpx;
+}
+
+.h1 {
+  font-size: 52rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+  line-height: 1.2;
+}
+
+.sub {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #86868E;
+  line-height: 1.5;
+}
+
+/* ---------- 输入 ---------- */
+.form {
+  margin-top: 28rpx;
+  background: #F6F6F8;
+  border-radius: 26rpx;
+  padding: 4rpx 28rpx 0;
+}
+
+.formhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60rpx;
+}
+
+.fh-t {
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.fh-btn {
+  font-size: 22rpx;
+  color: #FF4D3D;
+  padding-left: 26rpx;
+}
+
+.farea {
+  width: 100%;
+  height: 178rpx;
+  font-size: 29rpx;
+  font-weight: 600;
+  line-height: 1.62;
+  color: #101014;
+  padding: 4rpx 0 8rpx;
+}
+
+.ph {
+  color: #C6C6CE;
+  font-weight: 400;
+}
+
+.ffoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64rpx;
+  border-top: 2rpx solid #EDEDF0;
+}
+
+.fstat {
+  font-size: 21rpx;
+  color: #B4B4BC;
+}
+
+.fstat.warn {
+  color: #D93A2B;
+}
+
+.fstate {
+  font-size: 21rpx;
+  color: #B4B4BC;
+}
+
+/* ---------- 分段控件 ---------- */
+.seg {
+  margin-top: 26rpx;
+  display: flex;
+  background: #F1F1F4;
+  border-radius: 999rpx;
+  padding: 6rpx;
+}
+
+.seg-item {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  color: #6C6C76;
+  padding: 14rpx 0;
+  border-radius: 999rpx;
+}
+
+.seg-item.on {
+  background: #FFFFFF;
+  color: #101014;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.hint {
+  margin-top: 12rpx;
+  font-size: 21rpx;
+  color: #B4B4BC;
+}
+
+/* ---------- 示例词 ---------- */
+.chips {
+  margin-top: 26rpx;
+  display: flex;
+}
+
+.chip {
+  margin-right: 16rpx;
+  padding: 12rpx 32rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #E6E6EA;
+  font-size: 24rpx;
+  color: #3A3A42;
+}
+
+.chip.on {
+  background: #101014;
+  border-color: #101014;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------- 主按钮 ---------- */
+.gen {
+  margin-top: 28rpx;
+  height: 100rpx;
+  border-radius: 22rpx;
+  background: #FF4D3D;
+  color: #FFFFFF;
+  font-size: 31rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1rpx;
+}
+
+/* ---------- 结果卡 ---------- */
+.res {
+  margin-top: 34rpx;
+}
+
+.res-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.res-title {
+  font-size: 26rpx;
+  color: #86868E;
+}
+
+.res-count {
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.card {
+  padding: 26rpx 0 24rpx;
+  border-bottom: 2rpx solid #F1F1F4;
+}
+
+.card-top {
+  display: flex;
+  align-items: baseline;
+}
+
+.card-w {
+  font-size: 42rpx;
+  font-weight: 700;
+  letter-spacing: -0.5rpx;
+}
+
+.card-form {
+  margin-left: 14rpx;
+  font-size: 21rpx;
+  color: #B4B4BC;
+}
+
+.card-copy {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: #FF4D3D;
+  padding-left: 24rpx;
+}
+
+.card-copy.done {
+  color: #B4B4BC;
+}
+
+.card-ipa {
+  margin-top: 10rpx;
+  font-size: 42rpx;
+  font-weight: 500;
+  color: #101014;
+  letter-spacing: 0.5rpx;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.ipa-sub {
+  color: #86868E;
+  font-size: 34rpx;
+}
+
+.card-mean {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.55;
+  color: #26262C;
+}
+
+.card-meta {
+  margin-top: 12rpx;
+  font-size: 21rpx;
+  color: #B4B4BC;
+}
+
+.card-syl {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #6C6C76;
+}
+
+.card-tag {
+  display: inline-block;
+  margin-right: 12rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 8rpx;
+  background: #FFF4E0;
+  color: #B26A00;
+  font-size: 20rpx;
+}
+
+.card-tag.gray {
+  background: #F2F2F4;
+  color: #86868E;
+}
+
+/* ---------- 记录 ---------- */
+.sec-head {
+  margin-top: 40rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sec-title {
+  font-size: 26rpx;
+  color: #86868E;
+}
+
+.sec-op {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #FF4D3D;
+}
+
+.sec-count {
+  margin-top: 10rpx;
+  font-size: 21rpx;
+  color: #B4B4BC;
+}
+
+.items {
+  margin-top: 10rpx;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid #F2F2F4;
+}
+
+.item-w {
+  width: 230rpx;
+  flex-shrink: 0;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #26262C;
+}
+
+.item-ipa {
+  flex: 1;
+  font-size: 24rpx;
+  color: #86868E;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.item-t {
+  padding-left: 16rpx;
+  font-size: 20rpx;
+  color: #C6C6CE;
+}
+
+.list-empty {
+  margin-top: 16rpx;
+  padding: 36rpx 0;
+  text-align: center;
+  font-size: 23rpx;
+  color: #C6C6CE;
+  background: #FAFAFB;
+  border-radius: 20rpx;
+}
+
+.list-hint {
+  margin-top: 14rpx;
+  font-size: 20rpx;
+  color: #C6C6CE;
+}
+
+/* ---------- 解锁 ---------- */
+.unlock {
+  margin-top: 34rpx;
+  background: #FFF3F1;
+  border-radius: 22rpx;
+  padding: 26rpx 28rpx;
+}
+
+.unlock-main {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #D93A2B;
+}
+
+.unlock-sub {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: #C4746A;
+}
+
+.unlocked-tip {
+  margin-top: 34rpx;
+  font-size: 23rpx;
+  color: #B4B4BC;
+  text-align: center;
+}
+
+.note {
+  margin-top: 38rpx;
+  font-size: 21rpx;
+  color: #B4B4BC;
+  line-height: 1.85;
+}
+
+.footer {
+  margin-top: 26rpx;
+  text-align: center;
+  font-size: 21rpx;
+  color: #C6C6CE;
+}

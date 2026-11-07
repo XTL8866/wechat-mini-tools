@@ -1,0 +1,123 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">音标查询</view>
+    <view class="sub">输单词，音标、音节、重音、释义一次给全</view>
+  </view>
+
+  <!-- 输入 -->
+  <view class="form">
+    <view class="formhead">
+      <text class="fh-t">一行一个单词</text>
+      <text class="fh-btn" bindtap="onClear">清空</text>
+    </view>
+    <textarea
+      class="farea"
+      value="{{text}}"
+      placeholder="schedule&#10;thorough&#10;environment"
+      placeholder-class="ph"
+      maxlength="400"
+      auto-height="{{false}}"
+      show-confirm-bar="{{false}}"
+      bindinput="onInput"
+    />
+    <view class="ffoot">
+      <text class="fstat {{statWarn ? 'warn' : ''}}">{{statText}}</text>
+      <text class="fstate">上限 {{cap}} 个</text>
+    </view>
+  </view>
+
+  <!-- 音标体系 -->
+  <view class="seg">
+    <view
+      wx:for="{{accents}}"
+      wx:key="id"
+      class="seg-item {{accent === item.id ? 'on' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onAccent"
+    >{{item.name}}</view>
+  </view>
+  <view class="hint">{{accentHint}}</view>
+
+  <!-- 示例词 -->
+  <view class="chips">
+    <view
+      wx:for="{{samples}}"
+      wx:key="key"
+      class="chip {{sample === item.key ? 'on' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onSample"
+    >{{item.name}}</view>
+  </view>
+
+  <!-- 主按钮 -->
+  <view class="gen" bindtap="onGenerate">{{list.length ? '再查一次' : '查询音标'}}</view>
+
+  <!-- 结果 -->
+  <view class="res">
+    <view class="res-head">
+      <text class="res-title">查询结果</text>
+      <text class="res-count">{{list.length ? list.length + ' 个词' : ''}}</text>
+    </view>
+
+    <block wx:if="{{list.length}}">
+      <view class="card" wx:for="{{list}}" wx:key="word">
+        <view class="card-top">
+          <text class="card-w">{{item.word}}</text>
+          <text class="card-form" wx:if="{{item.form}}">← {{item.base}}</text>
+          <view class="card-copy {{copied === index ? 'done' : ''}}" data-index="{{index}}" bindtap="onCopy">
+            {{copied === index ? '已复制' : '复制'}}
+          </view>
+        </view>
+
+        <view class="card-ipa">
+          <text>{{item.ipaMain}}</text>
+          <text class="ipa-sub" wx:if="{{item.ipaSub}}"> / {{item.ipaSub}}</text>
+        </view>
+
+        <view class="card-mean">
+          <text class="card-tag" wx:if="{{!item.found}}">推算</text>
+          <text class="card-tag gray" wx:if="{{item.form}}">{{item.form}}</text>
+          <text>{{item.pos}} {{item.mean}}</text>
+        </view>
+
+        <view class="card-meta">{{item.meta}}</view>
+        <view class="card-syl">{{item.syl}}</view>
+        <view class="card-meta" wx:if="{{item.suggestText}}">是不是想查：{{item.suggestText}}</view>
+      </view>
+    </block>
+
+    <view class="list-empty" wx:else>输入单词，按下查询</view>
+  </view>
+
+  <!-- 记录 -->
+  <view class="sec-head">
+    <text class="sec-title">最近查过</text>
+    <text class="sec-op" bindtap="onCopyAll">复制全部</text>
+  </view>
+  <view class="sec-count">{{history.length}}/{{histCap}}</view>
+
+  <block wx:if="{{history.length}}">
+    <view class="items">
+      <view class="item" wx:for="{{history}}" wx:key="word" data-index="{{index}}" bindlongpress="onRemove">
+        <text class="item-w">{{item.word}}</text>
+        <text class="item-ipa">{{item.ipa}}</text>
+        <text class="item-t">{{item.t}}</text>
+      </view>
+    </view>
+    <view class="list-hint">长按删掉一条</view>
+  </block>
+  <view class="list-empty" wx:else>查过的词会自动记在这儿</view>
+
+  <!-- 解锁 -->
+  <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+    <view class="unlock-main">解锁一次查 12 个</view>
+    <view class="unlock-sub">看一段激励视频，还能把记录本扩到 60 条</view>
+  </view>
+  <view class="unlocked-tip" wx:else>已解锁：一次 12 个，记录 60 条</view>
+
+  <view class="note">音节数和重音位置不是写死的，是从音标本身算出来的；词库没收录的词会明确标成「推算」。</view>
+
+  <view class="footer">只在本地算，不上传任何内容</view>
+</view>
