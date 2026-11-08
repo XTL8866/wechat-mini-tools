@@ -1,0 +1,375 @@
+.page {
+  padding: 24rpx 32rpx 60rpx;
+}
+
+/* ---------- 顶部 ---------- */
+.hero {
+  padding-top: 16rpx;
+}
+
+.h1 {
+  font-size: 52rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+  line-height: 1.2;
+}
+
+.sub {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #86868E;
+  line-height: 1.5;
+}
+
+/* ---------- 输入 ---------- */
+.field {
+  margin-top: 40rpx;
+  background: #F6F6F8;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx 22rpx;
+}
+
+.field-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field-label {
+  font-size: 24rpx;
+  color: #86868E;
+}
+
+.field-count {
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.input {
+  margin-top: 14rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #101014;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.ph {
+  color: #B4B4BC;
+  font-weight: 400;
+  font-size: 30rpx;
+}
+
+.field-hint {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.field-hint.warn {
+  color: #D93A2B;
+}
+
+/* ---------- 区块 ---------- */
+.section {
+  margin-top: 36rpx;
+}
+
+.section-label {
+  font-size: 24rpx;
+  color: #86868E;
+  margin-bottom: 16rpx;
+}
+
+.hint {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+/* chip：8 个会折两行，行距要留够，别让两行粘成一坨 */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chip {
+  margin-right: 14rpx;
+  margin-bottom: 14rpx;
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #E6E6EA;
+  font-size: 26rpx;
+  color: #3A3A42;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip.on {
+  background: #101014;
+  border-color: #101014;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------- 主按钮 ---------- */
+.btn-primary {
+  margin-top: 34rpx;
+  height: 100rpx;
+  border-radius: 22rpx;
+  background: #FF4D3D;
+  color: #FFFFFF;
+  font-size: 31rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1rpx;
+}
+
+.btn-primary.dim {
+  opacity: 0.55;
+}
+
+/* ---------- 结果 ---------- */
+.result-head {
+  margin-top: 52rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.result-head.small {
+  margin-top: 44rpx;
+}
+
+.result-title {
+  font-size: 26rpx;
+  color: #86868E;
+}
+
+.result-count {
+  font-size: 23rpx;
+  color: #B4B4BC;
+}
+
+/* 结果卡 */
+.card {
+  margin-top: 18rpx;
+  border-radius: 22rpx;
+  background: #FAFAFB;
+  padding: 24rpx 26rpx 22rpx;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid #EFEFF2;
+}
+
+.card-mark {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #101014;
+  background: #EDEDF1;
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+}
+
+.card-mark.hole {
+  background: #EEF1FF;
+  color: #3550C8;
+}
+
+.card-mark.shaft {
+  background: #EAF6EE;
+  color: #2C7A48;
+}
+
+.card-mark.fit {
+  background: #F2F2F4;
+  color: #4A4A52;
+}
+
+.card-mark.clearance {
+  background: #EAF6EE;
+  color: #2C7A48;
+}
+
+.card-mark.transition {
+  background: #FFF4E0;
+  color: #B26A00;
+}
+
+.card-mark.interference {
+  background: #FFEFEC;
+  color: #C0392B;
+}
+
+.card-spec {
+  margin-left: 14rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #101014;
+  font-variant-numeric: tabular-nums;
+}
+
+.card-dim {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: #B4B4BC;
+  font-variant-numeric: tabular-nums;
+}
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14rpx;
+}
+
+.kv-k {
+  font-size: 25rpx;
+  color: #86868E;
+}
+
+.kv-v {
+  font-size: 27rpx;
+  color: #101014;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.fit-card {
+  background: #FFFBF7;
+}
+
+.copy {
+  margin-left: 18rpx;
+  font-size: 24rpx;
+  color: #FF4D3D;
+  padding: 4rpx 0 4rpx 16rpx;
+}
+
+/* ---------- 批量对照表 ---------- */
+.row-head {
+  display: flex;
+  margin-top: 12rpx;
+  padding: 0 0 10rpx;
+  border-bottom: 2rpx solid #F1F1F4;
+  font-size: 21rpx;
+  color: #C6C6CE;
+}
+
+.rh-size {
+  width: 84rpx;
+  flex-shrink: 0;
+}
+
+.rh-dev {
+  flex: 1;
+}
+
+.rh-fit {
+  width: 230rpx;
+  text-align: right;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid #F6F6F8;
+}
+
+.row-size {
+  width: 84rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: #101014;
+  font-variant-numeric: tabular-nums;
+}
+
+.row-dev {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dev-hole {
+  font-size: 23rpx;
+  color: #3550C8;
+  font-variant-numeric: tabular-nums;
+}
+
+.dev-shaft {
+  margin-top: 4rpx;
+  font-size: 23rpx;
+  color: #2C7A48;
+  font-variant-numeric: tabular-nums;
+}
+
+.row-fit {
+  width: 230rpx;
+  text-align: right;
+  font-size: 22rpx;
+  color: #6C6C76;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 解锁 ---------- */
+.unlock {
+  margin-top: 36rpx;
+  background: #FFF3F1;
+  border-radius: 22rpx;
+  padding: 26rpx 28rpx;
+}
+
+.unlock-main {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #D93A2B;
+}
+
+.unlock-sub {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: #C4746A;
+}
+
+.unlocked-tip {
+  margin-top: 36rpx;
+  font-size: 23rpx;
+  color: #B4B4BC;
+  text-align: center;
+}
+
+/* ---------- 空态 ---------- */
+.empty {
+  margin-top: 88rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-line {
+  width: 56rpx;
+  height: 2rpx;
+  background: #E6E6EA;
+}
+
+.empty-text {
+  margin-top: 22rpx;
+  font-size: 24rpx;
+  color: #C6C6CE;
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  margin-top: 64rpx;
+  text-align: center;
+  font-size: 21rpx;
+  color: #C6C6CE;
+}

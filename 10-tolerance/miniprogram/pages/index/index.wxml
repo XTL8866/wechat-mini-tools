@@ -1,0 +1,146 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">公差查询</view>
+    <view class="sub">输尺寸、选公差带，上下偏差和配合直接算出来</view>
+  </view>
+
+  <!-- 输入 -->
+  <view class="field">
+    <view class="field-top">
+      <text class="field-label">基本尺寸 mm</text>
+      <text class="field-count">{{count ? count + ' 个' : '一行一个'}}</text>
+    </view>
+    <input
+      class="input"
+      value="{{sizeText}}"
+      placeholder="比如：25"
+      placeholder-class="ph"
+      maxlength="200"
+      confirm-type="done"
+      bindinput="onSizeInput"
+      bindconfirm="onGenerate"
+    />
+    <view class="field-hint {{sizeWarn ? 'warn' : ''}}">{{sizeHint}}</view>
+  </view>
+
+  <!-- 孔公差带 -->
+  <view class="section">
+    <view class="section-label">孔公差带</view>
+    <view class="chips">
+      <view
+        wx:for="{{holeChips}}"
+        wx:key="*this"
+        class="chip {{hole === item ? 'on' : ''}}"
+        data-k="{{item}}"
+        bindtap="onHole"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 轴公差带 -->
+  <view class="section">
+    <view class="section-label">轴公差带</view>
+    <view class="chips">
+      <view
+        wx:for="{{shaftChips}}"
+        wx:key="*this"
+        class="chip {{shaft === item ? 'on' : ''}}"
+        data-k="{{item}}"
+        bindtap="onShaft"
+      >{{item}}</view>
+    </view>
+    <view class="hint">大写是孔，小写是轴，和图纸上的写法一样</view>
+  </view>
+
+  <!-- 主按钮 -->
+  <view class="btn-primary {{generating ? 'dim' : ''}}" bindtap="onGenerate">
+    {{generating ? '查询中…' : (detail ? '重新查询' : '查询偏差')}}
+  </view>
+
+  <!-- 结果 -->
+  <block wx:if="{{detail}}">
+    <view class="result-head">
+      <text class="result-title">查询结果</text>
+      <text class="result-count">⌀{{detail.size}} · 尺寸段 {{detail.bandCoarse}}</text>
+    </view>
+
+    <!-- 孔 -->
+    <view class="card">
+      <view class="card-top">
+        <text class="card-mark hole">孔</text>
+        <text class="card-spec">{{detail.holeSpec}}</text>
+        <text class="card-dim">⌀{{detail.size}}</text>
+      </view>
+      <view class="kv" wx:for="{{detail.holeRows}}" wx:key="k">
+        <text class="kv-k">{{item.k}}</text>
+        <text class="kv-v">{{item.v}}</text>
+      </view>
+    </view>
+
+    <!-- 轴 -->
+    <view class="card">
+      <view class="card-top">
+        <text class="card-mark shaft">轴</text>
+        <text class="card-spec">{{detail.shaftSpec}}</text>
+        <text class="card-dim">⌀{{detail.size}}</text>
+      </view>
+      <view class="kv" wx:for="{{detail.shaftRows}}" wx:key="k">
+        <text class="kv-k">{{item.k}}</text>
+        <text class="kv-v">{{item.v}}</text>
+      </view>
+    </view>
+
+    <!-- 配合 -->
+    <view class="card fit-card">
+      <view class="card-top">
+        <text class="card-mark fit {{detail.fitType}}">{{detail.fitName}}</text>
+        <text class="card-spec">{{detail.holeSpec}} / {{detail.shaftSpec}}</text>
+        <view class="copy" bindtap="onCopy">复制</view>
+      </view>
+      <view class="kv" wx:for="{{detail.fitRows}}" wx:key="k">
+        <text class="kv-k">{{item.k}}</text>
+        <text class="kv-v">{{item.v}}</text>
+      </view>
+    </view>
+
+    <!-- 批量 -->
+    <block wx:if="{{rows.length}}">
+      <view class="result-head small">
+        <text class="result-title">逐尺寸对照</text>
+        <text class="result-count">{{rows.length}} 行</text>
+      </view>
+      <view class="row-head">
+        <text class="rh-size">尺寸</text>
+        <text class="rh-dev">孔 / 轴 偏差</text>
+        <text class="rh-fit">配合</text>
+      </view>
+      <view class="row" wx:for="{{rows}}" wx:key="size">
+        <text class="row-size">{{item.size}}</text>
+        <view class="row-dev">
+          <text class="dev-hole">{{item.hole}}</text>
+          <text class="dev-shaft">{{item.shaft}}</text>
+        </view>
+        <text class="row-fit">{{item.fit}}</text>
+      </view>
+    </block>
+
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+      <view class="unlock-main">解锁批量查询</view>
+      <view class="unlock-sub">看一段激励视频，一次算 8 个尺寸</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，一次最多 8 个尺寸</view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty" wx:else>
+    <view class="empty-line"></view>
+    <view class="empty-text">填一个尺寸，选好公差带，按下查询</view>
+  </view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">按 GB/T 1800.1 查表，本地计算，不上传任何输入</view>
+</view>
