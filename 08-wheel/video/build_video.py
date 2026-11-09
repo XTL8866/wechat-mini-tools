@@ -44,7 +44,7 @@ SCROLL_REC = 1210       # 下边落在第 5 条记录与解锁卡之间的空隙
 SCROLL_END = 1671       # 压到底：解锁后的状态 + 说明 + 页脚
 
 SPIN = 24               # 转盘截了 24 个转角，15 度一帧
-SPIN_DUR = 2.30         # 视频里这一转的时长（必须收在第 3 句结束前）
+SPIN_DUR = 2.44         # 视频里这一转的时长（正好收在第 3 句结束那一刻）
 
 # toast 放在转盘下缘与结果卡之间：不压结果文字，也不压记录
 TOAST_Y = 600
@@ -268,12 +268,12 @@ def main():
 
         # ---- 句3 转：先滚到转盘，再转起来，停下就是结果 ----
         if t < S[4]:
-            if t < S[3] + 0.35:
+            if t < S[3] + 0.30:
                 return compose(ctx, "s_filled", SCROLL_TOP, sub_text[3])
-            if t < S[3] + 0.85:
-                p = ease_io((t - (S[3] + 0.35)) / 0.50)
+            if t < S[3] + 0.75:
+                p = ease_io((t - (S[3] + 0.30)) / 0.45)
                 return compose(ctx, "s_filled", lerp(SCROLL_TOP, SCROLL_WHEEL, p), sub_text[3])
-            t0 = S[3] + 0.85
+            t0 = S[3] + 0.75
             if t < t0 + SPIN_DUR:
                 return compose(ctx, spin_shot(t, t0), SCROLL_WHEEL, sub_text[3])
             # 停稳后留一点时间让结果卡露出来
@@ -281,10 +281,10 @@ def main():
 
         # ---- 句4 换一套选项：四格，结果立刻出来 ----
         if t < S[5]:
-            if t < S[4] + 0.34:
+            if t < S[4] + 1.20:
                 return compose(ctx, "s_result", SCROLL_WHEEL, sub_text[4])
             # 两个状态的转盘位置一样，直接叠化，看起来是选项换了、盘面重画
-            a = ease_io((t - (S[4] + 0.34)) / 0.30)
+            a = ease_io((t - (S[4] + 1.20)) / 0.30)
             return compose(ctx, "s_preset4", SCROLL_WHEEL, sub_text[4], ui_alpha=a)
 
         # ---- 句5 不放回：连抽三次，记录里不重样 ----
