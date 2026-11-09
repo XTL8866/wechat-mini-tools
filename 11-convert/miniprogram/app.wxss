@@ -1,0 +1,11 @@
+/* 全局设计系统 —— 简约白 + 单一主色，不做多余装饰 */
+page {
+  background: #FFFFFF;
+  color: #101014;
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+view, text {
+  box-sizing: border-box;
+}

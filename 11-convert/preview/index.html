@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>单位换算 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6px; font-size: 13px; color: #86868E; line-height: 1.5; }
+
+  /* 输入 */
+  .field { margin-top: 20px; background: #F6F6F8; border-radius: 12px; padding: 12px 14px 11px; }
+  .field-top { display: flex; justify-content: space-between; align-items: center; }
+  .field-label { font-size: 12px; color: #86868E; }
+  .field-count { font-size: 11px; color: #B4B4BC; }
+  .input {
+    display: block; width: 100%; height: 28px; border: none; outline: none;
+    background: transparent; font-family: inherit; font-size: 20px; font-weight: 600;
+    color: #101014; margin-top: 7px; font-variant-numeric: tabular-nums;
+  }
+  .input::placeholder { color: #B4B4BC; font-weight: 400; font-size: 15px; }
+  .field-hint { margin-top: 6px; font-size: 11px; color: #B4B4BC; }
+  .field-hint.warn { color: #D93A2B; }
+
+  /* 区块 */
+  .section { margin-top: 17px; }
+  .section-label { font-size: 12px; color: #86868E; margin-bottom: 8px; }
+  .hint { margin-top: 7px; font-size: 11px; color: #B4B4BC; }
+  .chips { display: flex; flex-wrap: wrap; }
+  .chip {
+    margin-right: 7px; margin-bottom: 7px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid #E6E6EA; font-size: 13px; color: #3A3A42; cursor: pointer;
+    font-variant-numeric: tabular-nums;
+  }
+  .chip.on { background: #101014; border-color: #101014; color: #FFFFFF; font-weight: 600; }
+
+  /* 主按钮 */
+  .gen {
+    margin-top: 15px; height: 50px; border-radius: 11px; background: #FF4D3D;
+    color: #FFFFFF; font-size: 15.5px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+
+  /* 结果 */
+  .res { margin-top: 26px; }
+  .res-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .res-head.small { margin-top: 22px; }
+  .res-title { font-size: 13px; color: #86868E; }
+  .res-count { font-size: 11.5px; color: #B4B4BC; font-variant-numeric: tabular-nums; }
+
+  .card { margin-top: 9px; border-radius: 11px; background: #FAFAFB; padding: 12px 13px 11px; }
+  .card-top { display: flex; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #EFEFF2; }
+  .mark {
+    font-size: 11px; font-weight: 600; border-radius: 4px; padding: 2px 6px;
+    background: #EEF1FF; color: #3550C8;
+  }
+  .mark.alt { background: #EAF6EE; color: #2C7A48; }
+  .mark.basis { background: #F2F2F4; color: #4A4A52; }
+  .card-spec { margin-left: 7px; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .card-dim { margin-left: auto; font-size: 12px; color: #B4B4BC; font-variant-numeric: tabular-nums; }
+  .card-copy { margin-left: auto; font-size: 12px; color: #FF4D3D; cursor: pointer; padding-left: 6px; }
+  .card-copy.done { color: #B4B4BC; }
+
+  /* 主结果大数字 */
+  .bigval { display: flex; align-items: baseline; padding: 13px 0 3px; }
+  .bignum {
+    font-size: 38px; font-weight: 700; letter-spacing: -1px; line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .bigunit { margin-left: 6px; font-size: 17px; color: #86868E; font-weight: 600; }
+
+  .kv { display: flex; justify-content: space-between; align-items: center; padding-top: 7px; }
+  .kv-k { font-size: 12.5px; color: #86868E; }
+  .kv-v { font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kv.on .kv-k, .kv.on .kv-v { color: #3550C8; }
+
+  .basis-text { margin-top: 8px; font-size: 12px; color: #4A4A52; line-height: 1.7; font-variant-numeric: tabular-nums; }
+
+  /* 批量表 */
+  .row-head {
+    display: flex; margin-top: 6px; padding-bottom: 5px;
+    border-bottom: 1px solid #F1F1F4; font-size: 10.5px; color: #C6C6CE;
+  }
+  .rh-v { flex: 1; }
+  .rh-out { flex: 1; text-align: right; }
+  .row { display: flex; align-items: center; padding: 9px 0; border-bottom: 1px solid #F6F6F8; }
+  .row-v { flex: 1; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .row-out { flex: 1; text-align: right; font-size: 13px; color: #3550C8; font-variant-numeric: tabular-nums; }
+
+  /* 解锁 */
+  .unlock { margin-top: 18px; background: #FFF3F1; border-radius: 11px; padding: 13px 14px; cursor: pointer; }
+  .unlock-main { font-size: 14.5px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 11.5px; color: #C4746A; }
+  .unlocked-tip { margin-top: 18px; font-size: 11.5px; color: #B4B4BC; text-align: center; }
+
+  .empty { margin-top: 18px; display: flex; flex-direction: column; align-items: center; }
+  .empty-line { width: 28px; height: 1px; background: #E6E6EA; }
+  .empty-text { margin-top: 11px; font-size: 12px; color: #C6C6CE; }
+
+  .footer { margin-top: 32px; text-align: center; font-size: 10.5px; color: #C6C6CE; }
+
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">单位换算</div>
+    <div class="sub">输一个数，选好两个单位，结果和换算依据一起给</div>
+  </div>
+
+  <div class="field">
+    <div class="field-top">
+      <span class="field-label">数值</span>
+      <span class="field-count" id="fieldCount">一行一个</span>
+    </div>
+    <input class="input" id="finput" placeholder="比如：12" maxlength="200" />
+    <div class="field-hint" id="fhint">一行一个，最多 8 个</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">换算类别</div>
+    <div class="chips" id="catChips"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">从</div>
+    <div class="chips" id="fromChips"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">到</div>
+    <div class="chips" id="toChips"></div>
+    <div class="hint">同一类别里随便挑，换单位不用重新输数值</div>
+  </div>
+
+  <div class="gen" id="genBtn">换算</div>
+
+  <div class="res" id="res">
+    <div class="res-head">
+      <span class="res-title">换算结果</span>
+      <span class="res-count" id="resCount"></span>
+    </div>
+    <div id="cards"></div>
+    <div class="empty" id="resEmpty">
+      <div class="empty-line"></div>
+      <div class="empty-text">填一个数值，选好两个单位，按下换算</div>
+    </div>
+  </div>
+
+  <div id="batchWrap" class="hidden">
+    <div class="res-head small">
+      <span class="res-title">逐值换算</span>
+      <span class="res-count" id="batchCount"></span>
+    </div>
+    <div class="row-head">
+      <span class="rh-v" id="rhFrom">mm</span>
+      <span class="rh-out" id="rhTo">in</span>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <div class="unlock" id="unlockBox">
+    <div class="unlock-main">解锁批量换算</div>
+    <div class="unlock-sub">看一段激励视频，一次换 8 个数值</div>
+  </div>
+  <div class="unlocked-tip hidden" id="unlockedTip">已解锁，一次最多 8 个数值</div>
+
+  <div class="footer">系数按国际单位制与英美制定义值，本地计算，不上传任何输入</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/units.js"></script>
+<script>
+(function () {
+  var K = window.Units;
+
+  var S = {
+    text: '',
+    cat: 'length',
+    from: 'mm',
+    to: 'in',
+    detail: null,
+    rows: [],
+    unlocked: false,
+    copied: false
+  };
+
+  var el = {
+    finput: document.getElementById('finput'),
+    fhint: document.getElementById('fhint'),
+    fieldCount: document.getElementById('fieldCount'),
+    catChips: document.getElementById('catChips'),
+    fromChips: document.getElementById('fromChips'),
+    toChips: document.getElementById('toChips'),
+    genBtn: document.getElementById('genBtn'),
+    cards: document.getElementById('cards'),
+    resEmpty: document.getElementById('resEmpty'),
+    resCount: document.getElementById('resCount'),
+    batchWrap: document.getElementById('batchWrap'),
+    batchCount: document.getElementById('batchCount'),
+    rhFrom: document.getElementById('rhFrom'),
+    rhTo: document.getElementById('rhTo'),
+    rows: document.getElementById('rows'),
+    unlockBox: document.getElementById('unlockBox'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    toast: document.getElementById('toast')
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function catName() { return (K.catOf(S.cat) || {}).name || ''; }
+  function limit() { return K.limitOf(S.unlocked); }
+
+  /* ---------------- 渲染 ---------------- */
+
+  function renderChips() {
+    el.catChips.innerHTML = K.CATS.map(function (c) {
+      return '<div class="chip' + (c.key === S.cat ? ' on' : '') + '" data-k="' + c.key + '">' +
+        c.name + '</div>';
+    }).join('');
+    var chips = K.unitChips(S.cat);
+    el.fromChips.innerHTML = chips.map(function (u) {
+      return '<div class="chip' + (u === S.from ? ' on' : '') + '" data-k="' + esc(u) + '">' +
+        esc(u) + '</div>';
+    }).join('');
+    el.toChips.innerHTML = chips.map(function (u) {
+      return '<div class="chip' + (u === S.to ? ' on' : '') + '" data-k="' + esc(u) + '">' +
+        esc(u) + '</div>';
+    }).join('');
+  }
+
+  function kv(k, v, on) {
+    return '<div class="kv' + (on ? ' on' : '') + '"><span class="kv-k">' + esc(k) + '</span>' +
+      '<span class="kv-v">' + esc(v) + '</span></div>';
+  }
+
+  function render() {
+    var d = S.detail;
+    el.genBtn.textContent = d ? '重新换算' : '换算';
+
+    if (!d) {
+      el.cards.innerHTML = '';
+      el.resEmpty.classList.remove('hidden');
+      el.resCount.textContent = '';
+      el.batchWrap.classList.add('hidden');
+      el.rows.innerHTML = '';
+    } else {
+      el.resEmpty.classList.add('hidden');
+      el.resCount.textContent = d.catName + ' · ' + d.from + ' → ' + d.to;
+
+      var h = '<div class="card">' +
+        '<div class="card-top">' +
+          '<span class="mark">' + esc(d.catName) + '</span>' +
+          '<span class="card-spec">' + esc(d.fromText) + ' ' + esc(d.from) + '</span>' +
+          '<span class="card-copy' + (S.copied ? ' done' : '') + '" id="copyBtn">' +
+            (S.copied ? '已复制' : '复制') + '</span>' +
+        '</div>' +
+        '<div class="bigval"><span class="bignum">' + esc(d.outText) + '</span>' +
+          '<span class="bigunit">' + esc(d.to) + '</span></div>' +
+        d.mainRows.map(function (r) { return kv(r.k, r.v); }).join('') +
+      '</div>';
+
+      h += '<div class="card">' +
+        '<div class="card-top">' +
+          '<span class="mark alt">全部单位</span>' +
+          '<span class="card-spec">' + esc(d.fromText) + ' ' + esc(d.from) + '</span>' +
+          '<span class="card-dim">' + d.tableRows.length + ' 个</span>' +
+        '</div>' +
+        d.tableRows.map(function (r) {
+          return kv(r.name + ' · ' + r.k, r.text, r.on);
+        }).join('') +
+      '</div>';
+
+      h += '<div class="card">' +
+        '<div class="card-top">' +
+          '<span class="mark basis">依据</span>' +
+          '<span class="card-spec">定义值</span>' +
+        '</div>' +
+        '<div class="basis-text">' + esc(d.basis) + '</div>' +
+      '</div>';
+
+      el.cards.innerHTML = h;
+
+      if (S.rows.length > 1) {
+        el.batchWrap.classList.remove('hidden');
+        el.batchCount.textContent = S.rows.length + ' 行';
+        el.rhFrom.textContent = d.from;
+        el.rhTo.textContent = d.to;
+        el.rows.innerHTML = S.rows.map(function (r) {
+          return '<div class="row"><span class="row-v">' + esc(r.v) + '</span>' +
+            '<span class="row-out">' + esc(r.out) + '</span></div>';
+        }).join('');
+      } else {
+        el.batchWrap.classList.add('hidden');
+        el.rows.innerHTML = '';
+      }
+    }
+
+    // 没结果时不显示解锁卡，和小程序的 wx:if="detail" 对齐
+    el.unlockBox.classList.toggle('hidden', !S.detail || S.unlocked);
+    el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+    el.fieldCount.textContent = S.rows.length ? S.rows.length + ' 个' : '一行一个';
+  }
+
+  function parse() {
+    var p = K.parseInput(S.text, limit(), S.cat);
+    if (p.ok) {
+      el.fhint.textContent = p.values.length + ' 个数值 · ' + catName();
+      el.fhint.classList.remove('warn');
+    } else {
+      el.fhint.textContent = p.message;
+      el.fhint.classList.toggle('warn', p.code !== 'EMPTY');
+    }
+    return p;
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+  function hideToast() {
+    clearTimeout(toastTimer);
+    el.toast.classList.remove('show');
+  }
+
+  /* ---------------- 动作 ---------------- */
+
+  function setValue(t) {
+    S.text = String(t == null ? '' : t);
+    el.finput.value = S.text;
+    S.detail = null;
+    S.rows = [];
+    S.copied = false;
+    parse();
+    render();
+    return true;
+  }
+
+  function setCat(k) {
+    if (!K.catOf(k)) return false;
+    var chips = K.unitChips(k);
+    S.cat = k;
+    S.from = chips[0];
+    S.to = chips[chips.length - 1];
+    S.detail = null;
+    S.rows = [];
+    S.copied = false;
+    renderChips();
+    parse();
+    render();
+    return true;
+  }
+
+  function setFrom(u) {
+    if (u === S.from) return true;
+    if (u === S.to) S.to = S.from;
+    S.from = u;
+    renderChips();
+    if (S.detail) return generate();
+    return true;
+  }
+
+  function setTo(u) {
+    if (u === S.to) return true;
+    if (u === S.from) S.from = S.to;
+    S.to = u;
+    renderChips();
+    if (S.detail) return generate();
+    return true;
+  }
+
+  /** 一步设好一对单位，截图脚本切风格用 */
+  function setPair(cat, from, to) {
+    if (!K.catOf(cat)) return false;
+    S.cat = cat;
+    var chips = K.unitChips(cat);
+    S.from = chips.indexOf(from) >= 0 ? from : chips[0];
+    S.to = chips.indexOf(to) >= 0 ? to : chips[chips.length - 1];
+    renderChips();
+    if (S.detail) return generate();
+    return true;
+  }
+
+  function generate() {
+    var p = parse();
+    if (!p.ok) { toast(p.message); return false; }
+    var r = K.batch(S.cat, S.from, S.to, p.values);
+    if (!r.ok) { toast(r.message); return false; }
+
+    var first = r.list[0];
+    var back = K.convert(S.cat, S.to, S.from, 1);
+    S.detail = {
+      catName: catName(),
+      from: S.from,
+      to: S.to,
+      fromText: first.vText,
+      outText: first.outText,
+      exactText: K.exact(first.out),
+      mainRows: [
+        { k: '精确值', v: K.exact(first.out) + ' ' + S.to },
+        { k: '反向核对', v: '1 ' + S.to + ' = ' + K.fmt(back) + ' ' + S.from }
+      ],
+      tableRows: K.table(S.cat, S.from, first.v),
+      basis: K.basis(S.cat, S.from, S.to)
+    };
+    S.rows = r.list.length > 1 ? r.list.map(function (x) {
+      return { v: x.vText, out: x.outText };
+    }) : [];
+    S.copied = false;
+    render();
+    if (p.warning) toast(p.warning);
+    return true;
+  }
+
+  function copy() {
+    if (!S.detail) { toast('先换算一个数值'); return false; }
+    var p = K.parseInput(S.text, limit(), S.cat);
+    var txt = K.copyText(S.cat, S.from, S.to, p.ok ? p.values : []);
+    S.copied = true;
+    render();
+    toast('已复制 ' + (txt.split('\n')[0] || ''));
+    return true;
+  }
+
+  function unlock() {
+    S.unlocked = true;
+    parse();
+    render();
+    toast('已解锁，一次换 8 个数值');
+    return true;
+  }
+
+  function reset() {
+    S.cat = 'length';
+    S.from = 'mm';
+    S.to = 'in';
+    S.unlocked = false;
+    S.copied = false;
+    renderChips();
+    setValue('');
+    return true;
+  }
+
+  /* ---------------- 交互 ---------------- */
+
+  el.finput.addEventListener('input', function (e) { setValue(e.target.value); });
+  el.catChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (n) setCat(n.dataset.k);
+  });
+  el.fromChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (n) setFrom(n.dataset.k);
+  });
+  el.toChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (n) setTo(n.dataset.k);
+  });
+  el.genBtn.addEventListener('click', generate);
+  el.unlockBox.addEventListener('click', unlock);
+  el.cards.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('#copyBtn')) copy();
+  });
+
+  /* ---------------- 截图脚本的控制口 ---------------- */
+  window.__ctl = {
+    reset: reset,
+    setValue: setValue,
+    setXxx: setValue,
+    setCat: setCat,
+    setFrom: setFrom,
+    setTo: setTo,
+    setPair: setPair,
+    generate: generate,
+    copy: copy,
+    unlock: unlock,
+    toast: toast,
+    hideToast: hideToast,
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    state: function () {
+      return {
+        text: S.text, cat: S.cat, from: S.from, to: S.to,
+        unlocked: S.unlocked, copied: S.copied,
+        rows: S.rows, detail: S.detail
+      };
+    }
+  };
+
+  renderChips();
+  setValue('');
+})();
+</script>
+</body>
+</html>
