@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 UI = os.path.join(HERE, "build", "ui", "s_built.png")
-OUT = os.path.join(HERE, "out", "cover.png")
+OUT = os.path.join(HERE, "out", "cover-fast.png")
 
 W, H = 1080, 1440
 BG = (10, 10, 12)
@@ -53,9 +53,10 @@ mask = Image.new("L", (cw, ch), 0)
 ImageDraw.Draw(mask).rounded_rectangle([0, 0, cw - 1, ch - 1], radius=26, fill=255)
 canvas.paste(card, ((W - cw) // 2, 240), mask)
 
-d.text((72, 768), "填几个空", font=f_big, fill=INK)
-d.text((72, 914), "国标格式", font=f_big, fill=RED)
-d.text((72, 1058), "GB/T 7714 · 八种类型 · 标点不用管", font=f_sub, fill=DIM)
+# 快版封面：换成有痛感的两行，比描述功能更容易被点开
+d.text((72, 768), "导师退回三次", font=f_big, fill=INK)
+d.text((72, 914), "问题全在格式", font=f_big, fill=RED)
+d.text((72, 1058), "GB/T 7714 · 八种类型 · 一条一条对", font=f_sub, fill=DIM)
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 canvas.save(OUT)
