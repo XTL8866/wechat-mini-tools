@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""旁白合成：把 12 句台词转成音频，输出真实时长供排轴。"""
+"""旁白合成：开场钩子 + 正文台词转成音频，输出真实时长供排轴。"""
 import asyncio
 import json
 import os
@@ -15,6 +15,12 @@ FF = imageio_ffmpeg.get_ffmpeg_exe()
 
 VOICE = "zh-CN-YunxiNeural"
 RATE = "+6%"
+
+# 系列固定开场钩子，每条片子都带，只改「今天分享的这个」后面的主体
+HOOK = [
+    "一天一款小工具，持续更新不重样。",
+    "今天分享的这个，新手也能快速上手。",
+]
 
 LINES = [
     "做内容最费劲的一步，不是剪片，是想标题。",
@@ -56,19 +62,21 @@ async def tts(text, path):
 
 async def main():
     os.makedirs(AUD, exist_ok=True)
-    out = []
-    total = 0.0
-    for i, text in enumerate(LINES):
-        path = os.path.join(AUD, "l%02d.mp3" % i)
-        ok = await tts(text, path)
-        d = dur_of(path) if ok else 0.0
-        out.append({"i": i, "text": text, "file": path, "dur": round(d, 3)})
-        total += d
-        print("  %02d  %5.2fs  %s" % (i, d, text))
-
-    with open(os.path.join(AUD, "lines.json"), "w", encoding="utf-8") as f:
-        json.dump(out, f, ensure_ascii=False, indent=2)
-    print("\n口播总长 %.2fs，加留白约 %.1fs" % (total, total + len(LINES) * 0.35 + 1.2))
+    for tag, texts in (("h", HOOK), ("l", LINES)):
+        out = []
+        total = 0.0
+        print("==", "开场钩子" if tag == "h" else "正文")
+        for i, text in enumerate(texts):
+            path = os.path.join(AUD, "%s%02d.mp3" % (tag, i))
+            ok = await tts(text, path)
+            d = dur_of(path) if ok else 0.0
+            out.append({"i": i, "text": text, "file": path, "dur": round(d, 3)})
+            total += d
+            print("  %02d  %5.2fs  %s" % (i, d, text))
+        name = "hook.json" if tag == "h" else "lines.json"
+        with open(os.path.join(AUD, name), "w", encoding="utf-8") as f:
+            json.dump(out, f, ensure_ascii=False, indent=2)
+        print("  小计 %.2fs\n" % total)
 
 
 if __name__ == "__main__":
