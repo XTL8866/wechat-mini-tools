@@ -1,0 +1,127 @@
+<view class="page">
+
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="h1">金额大写</view>
+    <view class="sub">金额填进去，大写直接出来，零和角分都不会错</view>
+  </view>
+
+  <!-- 输入 -->
+  <view class="field">
+    <view class="field-top">
+      <text class="field-label">金额</text>
+      <text class="field-count">{{count ? count + ' 笔' : '单位：元'}}</text>
+    </view>
+    <input
+      class="input"
+      value="{{amountText}}"
+      placeholder="比如：1234.56"
+      placeholder-class="ph"
+      maxlength="40"
+      confirm-type="done"
+      bindinput="onAmountInput"
+      bindconfirm="onGenerate"
+    />
+    <view class="field-hint {{amountWarn ? 'warn' : ''}}">{{amountHint}}</view>
+  </view>
+
+  <!-- 快捷金额 -->
+  <view class="section">
+    <view class="section-label">试试这几个</view>
+    <view class="chips">
+      <view
+        wx:for="{{quick}}"
+        wx:key="v"
+        class="chip {{lastQuick === item.v ? 'on' : ''}}"
+        data-v="{{item.v}}"
+        bindtap="onQuick"
+      >{{item.t}}</view>
+    </view>
+    <view class="hint">这几个都是容易写错的：中间带零、到元为止、角位为零</view>
+  </view>
+
+  <!-- 主按钮 -->
+  <view class="btn-primary {{generating ? 'dim' : ''}}" bindtap="onGenerate">
+    {{generating ? '转换中…' : (detail ? '重新转换' : '转成大写')}}
+  </view>
+
+  <!-- 结果 -->
+  <block wx:if="{{detail}}">
+    <view class="result-head">
+      <text class="result-title">大写</text>
+      <text class="result-count">{{detail.small}}</text>
+    </view>
+
+    <!-- 主结果 -->
+    <view class="card main-card">
+      <view class="card-top">
+        <text class="card-mark">人民币</text>
+        <text class="card-spec">大写</text>
+        <view class="copy" bindtap="onCopy">{{copied ? '已复制' : '复制'}}</view>
+      </view>
+      <view class="upper">{{detail.upper}}</view>
+      <view class="kv">
+        <text class="kv-k">小写核对</text>
+        <text class="kv-v">{{detail.small}}</text>
+      </view>
+      <view class="kv">
+        <text class="kv-k">结尾</text>
+        <text class="kv-v small">{{detail.tail}}</text>
+      </view>
+    </view>
+
+    <!-- 分级 -->
+    <view class="card">
+      <view class="card-top">
+        <text class="card-mark alt">分级</text>
+        <text class="card-spec">四位一级</text>
+        <text class="card-dim">3 级</text>
+      </view>
+      <view class="kv {{item.on ? 'kv-on' : ''}}" wx:for="{{detail.levels}}" wx:key="name">
+        <text class="kv-k">{{item.name}} · {{item.digits}}</text>
+        <text class="kv-v">{{item.text}}</text>
+      </view>
+    </view>
+
+    <!-- 写法要点 -->
+    <view class="card basis-card">
+      <view class="card-top">
+        <text class="card-mark basis">要点</text>
+        <text class="card-spec">票据规范</text>
+      </view>
+      <view class="rule" wx:for="{{detail.rules}}" wx:key="t">
+        <view class="rule-t">{{item.t}}</view>
+        <view class="rule-v">{{item.v}}</view>
+      </view>
+    </view>
+
+    <!-- 批量 -->
+    <block wx:if="{{rows.length}}">
+      <view class="result-head small">
+        <text class="result-title">逐笔转换</text>
+        <text class="result-count">{{rows.length}} 笔</text>
+      </view>
+      <view class="row" wx:for="{{rows}}" wx:key="small">
+        <text class="row-small">{{item.small}}</text>
+        <text class="row-upper">{{item.upper}}</text>
+      </view>
+    </block>
+
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+      <view class="unlock-main">解锁批量转换</view>
+      <view class="unlock-sub">看一段激励视频，一次转 8 笔</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，一次最多 8 笔</view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty" wx:else>
+    <view class="empty-line"></view>
+    <view class="empty-text">填一个金额，按下转换，大写和分级一起给</view>
+  </view>
+
+  <!-- banner 广告位：未配置 unit-id 时不渲染，避免报错 -->
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">按票据结算规范本地计算，不上传任何输入</view>
+</view>

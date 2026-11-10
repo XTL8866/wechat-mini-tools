@@ -1,0 +1,352 @@
+.page {
+  padding: 24rpx 32rpx 60rpx;
+}
+
+/* ---------- 顶部 ---------- */
+.hero {
+  padding-top: 16rpx;
+}
+
+.h1 {
+  font-size: 52rpx;
+  font-weight: 700;
+  letter-spacing: -1rpx;
+  line-height: 1.2;
+}
+
+.sub {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #86868E;
+  line-height: 1.5;
+}
+
+/* ---------- 输入 ---------- */
+.field {
+  margin-top: 40rpx;
+  background: #F6F6F8;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx 22rpx;
+}
+
+.field-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field-label {
+  font-size: 24rpx;
+  color: #86868E;
+}
+
+.field-count {
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.input {
+  margin-top: 14rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #101014;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.ph {
+  color: #B4B4BC;
+  font-weight: 400;
+  font-size: 30rpx;
+}
+
+.field-hint {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+.field-hint.warn {
+  color: #D93A2B;
+}
+
+/* ---------- 区块 ---------- */
+.section {
+  margin-top: 34rpx;
+}
+
+.section-label {
+  font-size: 24rpx;
+  color: #86868E;
+  margin-bottom: 16rpx;
+}
+
+.hint {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  color: #B4B4BC;
+}
+
+/* chip：一行 3 个，最多 2 行 */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chip {
+  margin-right: 14rpx;
+  margin-bottom: 14rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #E6E6EA;
+  font-size: 26rpx;
+  color: #3A3A42;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip.on {
+  background: #101014;
+  border-color: #101014;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ---------- 主按钮 ---------- */
+.btn-primary {
+  margin-top: 30rpx;
+  height: 100rpx;
+  border-radius: 22rpx;
+  background: #FF4D3D;
+  color: #FFFFFF;
+  font-size: 31rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1rpx;
+}
+
+.btn-primary.dim {
+  opacity: 0.55;
+}
+
+/* ---------- 结果 ---------- */
+.result-head {
+  margin-top: 52rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.result-head.small {
+  margin-top: 44rpx;
+}
+
+.result-title {
+  font-size: 26rpx;
+  color: #86868E;
+}
+
+.result-count {
+  font-size: 23rpx;
+  color: #B4B4BC;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 结果卡 */
+.card {
+  margin-top: 18rpx;
+  border-radius: 22rpx;
+  background: #FAFAFB;
+  padding: 24rpx 26rpx 22rpx;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid #EFEFF2;
+}
+
+.card-mark {
+  font-size: 22rpx;
+  font-weight: 600;
+  background: #EEF1FF;
+  color: #3550C8;
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+}
+
+.card-mark.alt {
+  background: #EAF6EE;
+  color: #2C7A48;
+}
+
+.card-mark.basis {
+  background: #F2F2F4;
+  color: #4A4A52;
+}
+
+.card-spec {
+  margin-left: 14rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #101014;
+  font-variant-numeric: tabular-nums;
+}
+
+.card-dim {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: #B4B4BC;
+  font-variant-numeric: tabular-nums;
+}
+
+.copy {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: #FF4D3D;
+  padding: 4rpx 0 4rpx 16rpx;
+}
+
+/* 大写正文：会折行，行高留足，免得两行挤在一起 */
+.upper {
+  margin-top: 24rpx;
+  font-size: 46rpx;
+  font-weight: 700;
+  line-height: 1.75;
+  color: #101014;
+  letter-spacing: 1rpx;
+}
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16rpx;
+}
+
+.kv-k {
+  font-size: 25rpx;
+  color: #86868E;
+}
+
+.kv-v {
+  font-size: 27rpx;
+  color: #101014;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.kv-v.small {
+  font-size: 23rpx;
+  font-weight: 400;
+  color: #4A4A52;
+  max-width: 420rpx;
+  text-align: right;
+}
+
+.kv-on .kv-k,
+.kv-on .kv-v {
+  color: #3550C8;
+}
+
+.basis-card {
+  background: #FAFAFB;
+}
+
+/* 要点：一行标题 + 一行例子 */
+.rule {
+  padding-top: 18rpx;
+}
+
+.rule-t {
+  font-size: 24rpx;
+  color: #4A4A52;
+}
+
+.rule-v {
+  margin-top: 6rpx;
+  font-size: 23rpx;
+  color: #86868E;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 逐笔 ---------- */
+.row {
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #F6F6F8;
+}
+
+.row-small {
+  font-size: 23rpx;
+  color: #B4B4BC;
+  font-variant-numeric: tabular-nums;
+}
+
+.row-upper {
+  margin-top: 6rpx;
+  font-size: 27rpx;
+  color: #3550C8;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* ---------- 解锁 ---------- */
+.unlock {
+  margin-top: 36rpx;
+  background: #FFF3F1;
+  border-radius: 22rpx;
+  padding: 26rpx 28rpx;
+}
+
+.unlock-main {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #D93A2B;
+}
+
+.unlock-sub {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: #C4746A;
+}
+
+.unlocked-tip {
+  margin-top: 36rpx;
+  font-size: 23rpx;
+  color: #B4B4BC;
+  text-align: center;
+}
+
+/* ---------- 空态 ---------- */
+.empty {
+  margin-top: 36rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-line {
+  width: 56rpx;
+  height: 2rpx;
+  background: #E6E6EA;
+}
+
+.empty-text {
+  margin-top: 22rpx;
+  font-size: 24rpx;
+  color: #C6C6CE;
+}
+
+/* ---------- 页脚 ---------- */
+.footer {
+  margin-top: 64rpx;
+  text-align: center;
+  font-size: 21rpx;
+  color: #C6C6CE;
+}

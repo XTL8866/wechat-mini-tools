@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>金额大写 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12px 16.6px 30px; }
+
+  /* 顶部 */
+  .hero { padding-top: 8px; }
+  .h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6px; font-size: 13px; color: #86868E; line-height: 1.5; }
+
+  /* 输入 */
+  .field { margin-top: 20px; background: #F6F6F8; border-radius: 12px; padding: 12px 14px 11px; }
+  .field-top { display: flex; justify-content: space-between; align-items: center; }
+  .field-label { font-size: 12px; color: #86868E; }
+  .field-count { font-size: 11px; color: #B4B4BC; }
+  .input {
+    display: block; width: 100%; height: 28px; border: none; outline: none;
+    background: transparent; font-family: inherit; font-size: 20px; font-weight: 600;
+    color: #101014; margin-top: 7px; font-variant-numeric: tabular-nums;
+  }
+  .input::placeholder { color: #B4B4BC; font-weight: 400; font-size: 15px; }
+  .field-hint { margin-top: 6px; font-size: 11px; color: #B4B4BC; }
+  .field-hint.warn { color: #D93A2B; }
+
+  /* 区块 */
+  .section { margin-top: 17px; }
+  .section-label { font-size: 12px; color: #86868E; margin-bottom: 8px; }
+  .hint { margin-top: 7px; font-size: 11px; color: #B4B4BC; }
+  .chips { display: flex; flex-wrap: wrap; }
+  .chip {
+    margin-right: 7px; margin-bottom: 7px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid #E6E6EA; font-size: 13px; color: #3A3A42; cursor: pointer;
+    font-variant-numeric: tabular-nums;
+  }
+  .chip.on { background: #101014; border-color: #101014; color: #FFFFFF; font-weight: 600; }
+
+  /* 主按钮 */
+  .gen {
+    margin-top: 15px; height: 50px; border-radius: 11px; background: #FF4D3D;
+    color: #FFFFFF; font-size: 15.5px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+
+  /* 结果 */
+  .res { margin-top: 26px; }
+  .res-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .res-head.small { margin-top: 22px; }
+  .res-title { font-size: 13px; color: #86868E; }
+  .res-count { font-size: 11.5px; color: #B4B4BC; font-variant-numeric: tabular-nums; }
+
+  .card { margin-top: 9px; border-radius: 11px; background: #FAFAFB; padding: 12px 13px 11px; }
+  .card-top { display: flex; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #EFEFF2; }
+  .mark {
+    font-size: 11px; font-weight: 600; border-radius: 4px; padding: 2px 6px;
+    background: #EEF1FF; color: #3550C8;
+  }
+  .mark.alt { background: #EAF6EE; color: #2C7A48; }
+  .mark.basis { background: #F2F2F4; color: #4A4A52; }
+  .card-spec { margin-left: 7px; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .card-dim { margin-left: auto; font-size: 12px; color: #B4B4BC; }
+  .card-copy { margin-left: auto; font-size: 12px; color: #FF4D3D; cursor: pointer; padding-left: 6px; }
+  .card-copy.done { color: #B4B4BC; }
+
+  /* 大写正文：会折行，行高要够 */
+  .upper {
+    margin-top: 12px; font-size: 23px; font-weight: 700; line-height: 1.75;
+    letter-spacing: 0.5px; word-break: break-all;
+  }
+
+  .kv { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; }
+  .kv-k { font-size: 12.5px; color: #86868E; }
+  .kv-v { font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kv-v.small { font-size: 11.5px; font-weight: 400; color: #4A4A52; max-width: 210px; text-align: right; }
+  .kv.on .kv-k, .kv.on .kv-v { color: #3550C8; }
+
+  /* 要点 */
+  .rule { padding-top: 9px; }
+  .rule-t { font-size: 12px; color: #4A4A52; }
+  .rule-v {
+    margin-top: 3px; font-size: 11.5px; color: #86868E; line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 逐笔 */
+  .row { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid #F6F6F8; }
+  .row-small { font-size: 11.5px; color: #B4B4BC; font-variant-numeric: tabular-nums; }
+  .row-upper { margin-top: 3px; font-size: 13.5px; color: #3550C8; font-weight: 600; line-height: 1.6; }
+
+  /* 解锁 */
+  .unlock { margin-top: 18px; background: #FFF3F1; border-radius: 11px; padding: 13px 14px; cursor: pointer; }
+  .unlock-main { font-size: 14.5px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4px; font-size: 11.5px; color: #C4746A; }
+  .unlocked-tip { margin-top: 18px; font-size: 11.5px; color: #B4B4BC; text-align: center; }
+
+  .empty { margin-top: 18px; display: flex; flex-direction: column; align-items: center; }
+  .empty-line { width: 28px; height: 1px; background: #E6E6EA; }
+  .empty-text { margin-top: 11px; font-size: 12px; color: #C6C6CE; }
+
+  .footer { margin-top: 32px; text-align: center; font-size: 10.5px; color: #C6C6CE; }
+
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99;
+  }
+  .toast.show { opacity: 1; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">金额大写</div>
+    <div class="sub">金额填进去，大写直接出来，零和角分都不会错</div>
+  </div>
+
+  <div class="field">
+    <div class="field-top">
+      <span class="field-label">金额</span>
+      <span class="field-count" id="fieldCount">单位：元</span>
+    </div>
+    <input class="input" id="finput" placeholder="比如：1234.56" maxlength="40" />
+    <div class="field-hint" id="fhint">小数最多两位，最多算到 9999 亿元</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">试试这几个</div>
+    <div class="chips" id="quickChips"></div>
+    <div class="hint">这几个都是容易写错的：中间带零、到元为止、角位为零</div>
+  </div>
+
+  <div class="gen" id="genBtn">转成大写</div>
+
+  <div class="res" id="res">
+    <div class="res-head">
+      <span class="res-title">大写</span>
+      <span class="res-count" id="resCount"></span>
+    </div>
+    <div id="cards"></div>
+    <div class="empty" id="resEmpty">
+      <div class="empty-line"></div>
+      <div class="empty-text">填一个金额，按下转换，大写和分级一起给</div>
+    </div>
+  </div>
+
+  <div id="batchWrap" class="hidden">
+    <div class="res-head small">
+      <span class="res-title">逐笔转换</span>
+      <span class="res-count" id="batchCount"></span>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <div class="unlock" id="unlockBox">
+    <div class="unlock-main">解锁批量转换</div>
+    <div class="unlock-sub">看一段激励视频，一次转 8 笔</div>
+  </div>
+  <div class="unlocked-tip hidden" id="unlockedTip">已解锁，一次最多 8 笔</div>
+
+  <div class="footer">按票据结算规范本地计算，不上传任何输入</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/rmb.js"></script>
+<script>
+(function () {
+  var K = window.Rmb;
+
+  var QUICK = ['1234.56', '1200', '100500', '107.06', '100000001'];
+
+  var S = {
+    text: '',
+    lastQuick: '',
+    detail: null,
+    rows: [],
+    unlocked: false,
+    copied: false
+  };
+
+  var el = {
+    finput: document.getElementById('finput'),
+    fhint: document.getElementById('fhint'),
+    fieldCount: document.getElementById('fieldCount'),
+    quickChips: document.getElementById('quickChips'),
+    genBtn: document.getElementById('genBtn'),
+    cards: document.getElementById('cards'),
+    resEmpty: document.getElementById('resEmpty'),
+    resCount: document.getElementById('resCount'),
+    batchWrap: document.getElementById('batchWrap'),
+    batchCount: document.getElementById('batchCount'),
+    rows: document.getElementById('rows'),
+    unlockBox: document.getElementById('unlockBox'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    toast: document.getElementById('toast')
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function limit() { return K.limitOf(S.unlocked); }
+
+  /* ---------------- 渲染 ---------------- */
+
+  function renderChips() {
+    el.quickChips.innerHTML = QUICK.map(function (v) {
+      return '<div class="chip' + (v === S.lastQuick ? ' on' : '') + '" data-v="' + v + '">' + v + '</div>';
+    }).join('');
+  }
+
+  function kv(k, v, cls) {
+    return '<div class="kv"><span class="kv-k">' + esc(k) + '</span>' +
+      '<span class="kv-v' + (cls ? ' ' + cls : '') + '">' + esc(v) + '</span></div>';
+  }
+
+  function render() {
+    var d = S.detail;
+    el.genBtn.textContent = d ? '重新转换' : '转成大写';
+    renderChips();
+
+    if (!d) {
+      el.cards.innerHTML = '';
+      el.resEmpty.classList.remove('hidden');
+      el.resCount.textContent = '';
+      el.batchWrap.classList.add('hidden');
+      el.rows.innerHTML = '';
+    } else {
+      el.resEmpty.classList.add('hidden');
+      el.resCount.textContent = d.small;
+
+      var h = '<div class="card">' +
+        '<div class="card-top">' +
+          '<span class="mark">人民币</span>' +
+          '<span class="card-spec">大写</span>' +
+          '<span class="card-copy' + (S.copied ? ' done' : '') + '" id="copyBtn">' +
+            (S.copied ? '已复制' : '复制') + '</span>' +
+        '</div>' +
+        '<div class="upper">' + esc(d.upper) + '</div>' +
+        kv('小写核对', d.small) +
+        kv('结尾', d.tail, 'small') +
+      '</div>';
+
+      h += '<div class="card">' +
+        '<div class="card-top">' +
+          '<span class="mark alt">分级</span>' +
+          '<span class="card-spec">四位一级</span>' +
+          '<span class="card-dim">3 级</span>' +
+        '</div>' +
+        d.levels.map(function (r) {
+          return '<div class="kv' + (r.on ? ' on' : '') + '">' +
+            '<span class="kv-k">' + esc(r.name) + ' · ' + esc(r.digits) + '</span>' +
+            '<span class="kv-v">' + esc(r.text) + '</span></div>';
+        }).join('') +
+      '</div>';
+
+      h += '<div class="card">' +
+        '<div class="card-top">' +
+          '<span class="mark basis">要点</span>' +
+          '<span class="card-spec">票据规范</span>' +
+        '</div>' +
+        d.rules.map(function (r) {
+          return '<div class="rule"><div class="rule-t">' + esc(r.t) + '</div>' +
+            '<div class="rule-v">' + esc(r.v) + '</div></div>';
+        }).join('') +
+      '</div>';
+
+      el.cards.innerHTML = h;
+
+      if (S.rows.length > 1) {
+        el.batchWrap.classList.remove('hidden');
+        el.batchCount.textContent = S.rows.length + ' 笔';
+        el.rows.innerHTML = S.rows.map(function (r) {
+          return '<div class="row"><span class="row-small">' + esc(r.small) + '</span>' +
+            '<span class="row-upper">' + esc(r.upper) + '</span></div>';
+        }).join('');
+      } else {
+        el.batchWrap.classList.add('hidden');
+        el.rows.innerHTML = '';
+      }
+    }
+
+    // 没结果时不显示解锁卡，和小程序的 wx:if="detail" 对齐
+    el.unlockBox.classList.toggle('hidden', !S.detail || S.unlocked);
+    el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+    el.fieldCount.textContent = S.rows.length ? S.rows.length + ' 笔' : '单位：元';
+  }
+
+  function parse() {
+    var p = K.parseAmount(S.text);
+    if (p.ok) {
+      el.fhint.textContent = p.warning || ('¥' + p.text + ' · 共 ' + String(p.cents).length + ' 个数位');
+      el.fhint.classList.toggle('warn', !!p.warning);
+    } else {
+      el.fhint.textContent = p.message;
+      el.fhint.classList.toggle('warn', p.code !== 'EMPTY');
+    }
+    return p;
+  }
+
+  var toastTimer = null;
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+  function hideToast() {
+    clearTimeout(toastTimer);
+    el.toast.classList.remove('show');
+  }
+
+  /* ---------------- 动作 ---------------- */
+
+  function setValue(t) {
+    S.text = String(t == null ? '' : t);
+    el.finput.value = S.text;
+    S.lastQuick = QUICK.indexOf(S.text) >= 0 ? S.text : '';
+    S.detail = null;
+    S.rows = [];
+    S.copied = false;
+    parse();
+    render();
+    return true;
+  }
+
+  /** 点示例金额：填进去并直接算 */
+  function setQuick(v) {
+    setValue(v);
+    return generate();
+  }
+
+  function generate() {
+    var r = K.batch(S.text, limit());
+    if (!r.ok) { toast(r.message); return false; }
+
+    var first = r.list[0];
+    var rest = first.cents % 100;
+    var tail = rest === 0 ? '到元为止，元后写「整」'
+      : (rest % 10 === 0 ? '到角为止，角后写「整」'
+        : (Math.floor(rest / 10) === 0 ? '角为零、分不为零，元后补一个「零」'
+          : '有「分」，分后不写「整」'));
+
+    S.detail = {
+      upper: first.upper,
+      small: '¥' + first.text,
+      tail: tail,
+      levels: K.levels(first.cents),
+      rules: K.rules()
+    };
+    S.rows = r.list.length > 1 ? r.list.map(function (x) {
+      return { small: '¥' + x.text, upper: x.upper };
+    }) : [];
+    S.copied = false;
+    S._copy = K.copyText(r.list);
+    render();
+    if (r.warning) toast(r.warning);
+    return true;
+  }
+
+  function copy() {
+    if (!S.detail) { toast('先转一笔金额'); return false; }
+    S.copied = true;
+    render();
+    toast('已复制 ' + S.detail.upper);
+    return true;
+  }
+
+  function unlock() {
+    S.unlocked = true;
+    parse();
+    render();
+    if (S.text) generate();
+    toast('已解锁，一次转 8 笔');
+    return true;
+  }
+
+  function reset() {
+    S.unlocked = false;
+    S.copied = false;
+    S.lastQuick = '';
+    setValue('');
+    return true;
+  }
+
+  /* ---------------- 交互 ---------------- */
+
+  el.finput.addEventListener('input', function (e) { setValue(e.target.value); });
+  el.quickChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (n) setQuick(n.dataset.v);
+  });
+  el.genBtn.addEventListener('click', generate);
+  el.unlockBox.addEventListener('click', unlock);
+  el.cards.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('#copyBtn')) copy();
+  });
+
+  /* ---------------- 截图脚本的控制口 ---------------- */
+  window.__ctl = {
+    reset: reset,
+    setValue: setValue,
+    setXxx: setValue,
+    setQuick: setQuick,
+    generate: generate,
+    copy: copy,
+    unlock: unlock,
+    toast: toast,
+    hideToast: hideToast,
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    state: function () {
+      return {
+        text: S.text, unlocked: S.unlocked, copied: S.copied,
+        rows: S.rows, detail: S.detail
+      };
+    }
+  };
+
+  setValue('');
+})();
+</script>
+</body>
+</html>
