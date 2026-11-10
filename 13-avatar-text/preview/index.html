@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>头像文字贴纸 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  body { width: 390px; overflow-x: hidden; }
+
+  .page { padding: 12.5px 16.6px 31px; }
+
+  .hero { padding-top: 8.3px; }
+  .h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6.2px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 画布 */
+  .stage {
+    margin-top: 16.6px; position: relative; background: #F6F6F8;
+    border-radius: 12.5px; display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #cv { display: block; border-radius: 12.5px; }
+  .stage-empty {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .plus { font-size: 31px; color: #C6C6CE; line-height: 1; font-weight: 300; }
+  .stage-empty-text { margin-top: 8.3px; font-size: 13px; color: #B4B4BC; }
+  .stage-actions { margin-top: 8.3px; display: flex; justify-content: space-between; }
+  .link { font-size: 12px; color: #FF4D3D; }
+  .link.gray { color: #B4B4BC; }
+
+  /* 文字输入 */
+  .field { margin-top: 14.6px; background: #F6F6F8; border-radius: 12.5px; padding: 12.5px 14.5px 9.4px; }
+  .field-top { display: flex; justify-content: space-between; align-items: center; }
+  .field-label { font-size: 12.5px; color: #86868E; }
+  .field-count { font-size: 11.5px; color: #B4B4BC; }
+  .ipt {
+    margin-top: 7.3px; width: 100%; height: 39.5px; font-size: 19.8px;
+    font-weight: 600; line-height: 39.5px; color: #101014; word-break: break-all;
+  }
+  .ipt.ph { color: #B4B4BC; font-size: 15.1px; font-weight: 400; }
+  .caret {
+    display: none; width: 1.5px; height: 21px; background: #FF4D3D;
+    margin-left: 1px; vertical-align: -4px;
+  }
+  .caret.on { display: inline-block; }
+  .field-actions { margin-top: 3.1px; display: flex; justify-content: space-between; }
+
+  /* 区块 */
+  .section { margin-top: 15.6px; }
+  .section-label { font-size: 12.5px; color: #86868E; margin-bottom: 8.3px; }
+  .hint { margin-top: 6.2px; font-size: 11.5px; color: #B4B4BC; line-height: 1.5; }
+  .hint b { color: #3A3A42; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; }
+  .chip {
+    margin: 0 7.3px 7.3px 0; padding: 7.3px 15.6px; border-radius: 999px;
+    border: 1px solid #E6E6EA; font-size: 13.5px; color: #3A3A42; line-height: 1.2;
+  }
+  .chip.on { background: #101014; border-color: #101014; color: #FFFFFF; }
+  .chip.sm { padding: 6.2px 13.5px; font-size: 12.5px; }
+
+  /* 色板 */
+  .sw-row { display: flex; align-items: center; flex-wrap: wrap; }
+  .sw {
+    width: 35.4px; height: 35.4px; border-radius: 50%; margin: 0 9.4px 9.4px 0;
+    border: 1.5px solid #E6E6EA;
+  }
+  .sw.on { border-color: #101014; box-shadow: 0 0 0 2px #FFFFFF inset; }
+  .sw-auto {
+    width: auto; height: 35.4px; padding: 0 15px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    background: #FFFFFF; border: 1.5px solid #E6E6EA;
+  }
+  .sw-auto-t { font-size: 12px; color: #3A3A42; }
+  .sw-auto.on { background: #101014; border-color: #101014; box-shadow: none; }
+  .sw-auto.on .sw-auto-t { color: #FFFFFF; }
+
+  /* 描边 + 底板 */
+  .switch-row {
+    margin-top: 15.6px; display: flex; align-items: center;
+    padding: 11.5px 14.5px; background: #F6F6F8; border-radius: 10.4px;
+  }
+  .switch-label { font-size: 13.5px; font-weight: 600; width: 44px; }
+  .switch-sub { flex: 1; font-size: 11.5px; color: #B4B4BC; }
+  .sw-box {
+    width: 44px; height: 26px; border-radius: 999px; background: #D8D8DE;
+    position: relative;
+  }
+  .sw-box.on { background: #FF4D3D; }
+  .sw-knob {
+    position: absolute; top: 2px; left: 2px; width: 22px; height: 22px;
+    border-radius: 50%; background: #FFFFFF;
+  }
+  .sw-box.on .sw-knob { left: 20px; }
+
+  /* 主按钮 */
+  .btn-primary {
+    margin-top: 15.6px; height: 52px; border-radius: 11.5px; background: #FF4D3D;
+    color: #FFFFFF; font-size: 16.1px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; letter-spacing: 0.5px;
+  }
+  .btn-primary.dim { opacity: 0.55; }
+
+  /* 结果 */
+  .result-head { margin-top: 22px; display: flex; justify-content: space-between; align-items: baseline; }
+  .result-title { font-size: 13.5px; color: #86868E; }
+  .result-count { font-size: 12px; color: #B4B4BC; }
+  .meta-row {
+    margin-top: 8.3px; padding-bottom: 11.5px; border-bottom: 1px solid #F1F1F4;
+    display: flex; align-items: center;
+  }
+  .tag {
+    font-size: 10.4px; color: #86868E; background: #F4F4F6;
+    border-radius: 3px; padding: 2px 6px; margin-right: 6px;
+  }
+  .len { font-size: 10.4px; color: #C6C6CE; }
+  .meter-row { margin-top: 10.4px; display: flex; align-items: center; }
+  .meter-label { font-size: 11.5px; color: #86868E; width: 66px; flex-shrink: 0; }
+  .meter-bar { flex: 1; height: 5px; border-radius: 99px; background: #EDEDF0; overflow: hidden; }
+  .meter-fill { height: 100%; background: #1FA98B; }
+  .meter-fill.low { background: #E8342A; }
+  .meter-val { margin-left: 8.3px; font-size: 11.5px; color: #3A3A42; font-weight: 600; width: 52px; text-align: right; }
+  .btn-save {
+    margin-top: 13.5px; height: 50px; border-radius: 11.5px; border: 1px solid #101014;
+    color: #101014; font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-save.done { border-color: #C6C6CE; color: #B4B4BC; }
+
+  .unlock { margin-top: 15.6px; background: #FFF3F1; border-radius: 11.5px; padding: 13.5px 14.5px; }
+  .unlock-main { font-size: 15px; font-weight: 600; color: #D93A2B; }
+  .unlock-sub { margin-top: 4.2px; font-size: 12px; color: #C4746A; }
+  .unlocked-tip { margin-top: 15.6px; font-size: 12px; color: #B4B4BC; text-align: center; }
+
+  .empty { margin-top: 30px; display: flex; flex-direction: column; align-items: center; }
+  .empty-line { width: 29px; height: 1px; background: #E6E6EA; }
+  .empty-text { margin-top: 11.5px; font-size: 12.5px; color: #C6C6CE; }
+
+  .footer { margin-top: 26px; text-align: center; font-size: 11px; color: #C6C6CE; }
+
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99; max-width: 320px; line-height: 1.4;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">头像文字贴纸</div>
+    <div class="sub">量一下这块背景，自动挑最清楚的颜色</div>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="cv"></canvas>
+    <div class="stage-empty" id="stageEmpty">
+      <div class="plus">＋</div>
+      <div class="stage-empty-text">选一张图片</div>
+    </div>
+  </div>
+
+  <div class="stage-actions">
+    <span class="link" id="pickBtn">换一张</span>
+    <span class="link" id="lightBtn">浅底图</span>
+    <span class="link gray" id="sizeLabel">—</span>
+  </div>
+
+  <div class="field">
+    <div class="field-top">
+      <span class="field-label">贴纸文字</span>
+      <span class="field-count" id="len">0/12</span>
+    </div>
+    <div class="ipt ph" id="ipt">比如 陈、中秋快乐<span class="caret" id="caret"></span></div>
+    <div class="field-actions">
+      <span class="link" id="sampleTextBtn">试试「中秋快乐」</span>
+      <span class="link hidden" id="clearBtn">清空</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">字号</div>
+    <div class="chips" id="sizeChips"></div>
+    <div class="hint" id="sizeDesc">默认，一眼能看清</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">字体</div>
+    <div class="chips" id="fontChips"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">颜色</div>
+    <div class="sw-row" id="swRow"></div>
+    <div class="hint" id="colorHint">自动：只量文字那块背景，不量整张图</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">位置</div>
+    <div class="chips" id="posChips"></div>
+  </div>
+
+  <div class="switch-row">
+    <span class="switch-label">描边</span>
+    <div class="chips" id="strokeChips" style="flex:1"></div>
+  </div>
+
+  <div class="switch-row" style="margin-top:8.3px">
+    <span class="switch-label">底板</span>
+    <span class="switch-sub">字压在人脸上时打开</span>
+    <div class="sw-box" id="barBox"><div class="sw-knob"></div></div>
+  </div>
+
+  <div class="btn-primary" id="btn">生成头像</div>
+
+  <div id="resultWrap" class="hidden">
+    <div class="result-head">
+      <span class="result-title">生成好了</span>
+      <span class="result-count" id="resultSize">—</span>
+    </div>
+    <div class="meta-row">
+      <span class="tag" id="resFont">粗黑</span>
+      <span class="len" id="resMeta">1 行 · 字号 480</span>
+    </div>
+    <div class="meter-row">
+      <span class="meter-label">背景亮度</span>
+      <span class="meter-bar"><span class="meter-fill" id="meterFill" style="width:80%"></span></span>
+      <span class="meter-val" id="meterVal">0.86</span>
+    </div>
+    <div class="meter-row">
+      <span class="meter-label" id="crLabel">字色对比度</span>
+      <span class="meter-bar"><span class="meter-fill" id="crFill" style="width:60%"></span></span>
+      <span class="meter-val" id="crVal">14.2:1</span>
+    </div>
+    <div class="btn-save" id="saveBtn">存到相册</div>
+    <div class="unlock" id="unlock">
+      <div class="unlock-main">解锁不限次</div>
+      <div class="unlock-sub">免费 2 次之后，看一段激励视频即可无限做</div>
+    </div>
+    <div class="unlocked-tip hidden" id="unlockedTip">已解锁，不限次数</div>
+  </div>
+
+  <div class="empty" id="empty">
+    <div class="empty-line"></div>
+    <div class="empty-text">选图 → 打字 → 生成</div>
+  </div>
+
+  <div class="footer">图片只在本机处理，不上传</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/sticker.js"></script>
+<script>
+(function () {
+  var MAX_STAGE_H = 380;
+  var PH = '比如 陈、中秋快乐';
+
+  var S = {
+    text: '',
+    sample: 'none',      // none / light / dark
+    fontId: 'heavy',
+    color: 'auto',
+    posId: 'bottom',
+    sizeId: 'm',
+    strokeId: 2,
+    bar: false,
+    result: false,
+    unlocked: false,
+    saved: false,
+    plan: null
+  };
+
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+
+  var el = {
+    stage: document.getElementById('stage'),
+    stageEmpty: document.getElementById('stageEmpty'),
+    ipt: document.getElementById('ipt'),
+    len: document.getElementById('len'),
+    clearBtn: document.getElementById('clearBtn'),
+    sizeChips: document.getElementById('sizeChips'),
+    sizeDesc: document.getElementById('sizeDesc'),
+    fontChips: document.getElementById('fontChips'),
+    swRow: document.getElementById('swRow'),
+    colorHint: document.getElementById('colorHint'),
+    posChips: document.getElementById('posChips'),
+    strokeChips: document.getElementById('strokeChips'),
+    barBox: document.getElementById('barBox'),
+    btn: document.getElementById('btn'),
+    resultWrap: document.getElementById('resultWrap'),
+    resultSize: document.getElementById('resultSize'),
+    resFont: document.getElementById('resFont'),
+    resMeta: document.getElementById('resMeta'),
+    meterFill: document.getElementById('meterFill'),
+    meterVal: document.getElementById('meterVal'),
+    crFill: document.getElementById('crFill'),
+    crVal: document.getElementById('crVal'),
+    crLabel: document.getElementById('crLabel'),
+    saveBtn: document.getElementById('saveBtn'),
+    unlock: document.getElementById('unlock'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    empty: document.getElementById('empty'),
+    sizeLabel: document.getElementById('sizeLabel'),
+    lightBtn: document.getElementById('lightBtn'),
+    toast: document.getElementById('toast')
+  };
+
+  var toastTimer = null;
+
+  function esc(s) {
+    return String(s).replace(/[&<>]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c];
+    });
+  }
+
+  function toast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+
+  /* ---------- 绘制（和小程序里那份逐行对应） ---------- */
+
+  function drawLayers(layers, w, h) {
+    layers.forEach(function (L) {
+      ctx.save();
+      if (L.type === 'linear') {
+        var g = ctx.createLinearGradient(L.x0, L.y0, L.x1, L.y1);
+        L.stops.forEach(function (s) { g.addColorStop(s[0], s[1]); });
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      } else if (L.type === 'circle') {
+        ctx.globalAlpha = L.alpha == null ? 1 : L.alpha;
+        ctx.fillStyle = L.fill;
+        ctx.beginPath();
+        ctx.arc(L.cx, L.cy, L.r, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (L.type === 'ellipse') {
+        ctx.globalAlpha = L.alpha == null ? 1 : L.alpha;
+        ctx.fillStyle = L.fill;
+        ctx.translate(L.cx, L.cy);
+        ctx.scale(L.rx, L.ry);
+        ctx.beginPath();
+        ctx.arc(0, 0, 1, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (L.type === 'arc') {
+        ctx.fillStyle = L.fill;
+        ctx.beginPath();
+        ctx.arc(L.cx, L.cy, L.r, L.from, L.to);
+        ctx.closePath();
+        ctx.fill();
+      } else if (L.type === 'hair') {
+        ctx.fillStyle = L.fill;
+        ctx.translate(L.cx, L.cy);
+        ctx.scale(L.rx, L.ry);
+        ctx.beginPath();
+        ctx.arc(0, 0, 1, Math.PI, Math.PI * 2);
+        ctx.lineTo(1, (L.brow - L.cy) / L.ry);
+        ctx.lineTo(-1, (L.brow - L.cy) / L.ry);
+        ctx.closePath();
+        ctx.fill();
+      } else if (L.type === 'rect') {
+        ctx.fillStyle = L.fill;
+        ctx.fillRect(L.x, L.y, L.w, L.h);
+      }
+      ctx.restore();
+    });
+  }
+
+  function drawBar(bar) {
+    if (!bar) return;
+    var r = bar.radius, x = bar.x, y = bar.y, w = bar.w, h = bar.h;
+    ctx.save();
+    ctx.fillStyle = bar.fill;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawText(plan) {
+    var t = plan.text;
+    ctx.font = t.cssFont;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.lineJoin = 'round';
+    t.lines.forEach(function (line) {
+      line.chars.forEach(function (c) {
+        if (t.outline) {
+          ctx.lineWidth = t.strokeWidth * 2;
+          ctx.strokeStyle = t.strokeColor;
+          ctx.strokeText(c.ch, c.x, c.y);
+        }
+        ctx.fillStyle = t.color;
+        ctx.fillText(c.ch, c.x, c.y);
+      });
+    });
+  }
+
+  function fitStage(ratio) {
+    var w = 356.8;
+    var h = w * ratio;
+    if (h > MAX_STAGE_H) { h = MAX_STAGE_H; w = h / ratio; }
+    cv.style.width = Math.round(w) + 'px';
+    cv.style.height = Math.round(h) + 'px';
+    el.stage.style.height = Math.round(h) + 'px';
+  }
+
+  function bgLayersFor(w, h) {
+    if (S.sample === 'none') return null;
+    return Sticker.samplePhoto(S.sample, w, h);
+  }
+
+  /** 只画背景（取样亮度时必须没有字） */
+  function paintBg(w, h) {
+    cv.width = w;
+    cv.height = h;
+    ctx.clearRect(0, 0, w, h);
+    var layers = bgLayersFor(w, h);
+    if (layers) drawLayers(layers, w, h);
+  }
+
+  function paint(plan) {
+    var w = plan ? plan.canvas.w : 900;
+    var h = plan ? plan.canvas.h : 1200;
+    paintBg(w, h);
+    if (plan && plan.text) {
+      drawBar(plan.bar);
+      drawText(plan);
+    }
+  }
+
+  /** 只看文字将要占的那块区域，整图平均会被衬衫/背景拉偏 */
+  function regionLumOf(box, w, h) {
+    if (!box) return null;
+    try {
+      var d = ctx.getImageData(0, 0, w, h).data;
+      return Sticker.regionLuminance(d, w, box, 3);
+    } catch (e) { return null; }
+  }
+
+  function planArgs(bgLum) {
+    return {
+      text: S.text,
+      imgW: cv.width || 900,
+      imgH: cv.height || 1200,
+      fontId: S.fontId,
+      color: S.color,
+      posId: S.posId,
+      sizeId: S.sizeId,
+      strokeId: S.strokeId,
+      bar: S.bar,
+      bgLum: bgLum,
+      sample: S.sample === 'light' ? 'light' : 'dark'
+    };
+  }
+
+  /* ---------- 渲染 ---------- */
+
+  function render() {
+    if (S.text) {
+      el.ipt.className = 'ipt';
+      el.ipt.innerHTML = esc(S.text) + '<span class="caret" id="caret"></span>';
+      el.clearBtn.classList.remove('hidden');
+    } else {
+      el.ipt.className = 'ipt ph';
+      el.ipt.innerHTML = PH + '<span class="caret" id="caret"></span>';
+      el.clearBtn.classList.add('hidden');
+    }
+    el.len.textContent = S.text.length + '/12';
+
+    [].forEach.call(el.sizeChips.children, function (n) {
+      n.className = 'chip' + (n.dataset.id === S.sizeId ? ' on' : '');
+    });
+    Sticker.SIZES.forEach(function (s) { if (s.id === S.sizeId) el.sizeDesc.textContent = s.desc; });
+
+    [].forEach.call(el.fontChips.children, function (n) {
+      n.className = 'chip' + (n.dataset.id === S.fontId ? ' on' : '');
+    });
+    [].forEach.call(el.swRow.children, function (n) {
+      var v = n.dataset.v;
+      n.className = (v === undefined ? 'sw sw-auto' : 'sw') +
+        ((v === undefined ? S.color === 'auto' : S.color === v) ? ' on' : '');
+    });
+    [].forEach.call(el.posChips.children, function (n) {
+      n.className = 'chip' + (n.dataset.id === S.posId ? ' on' : '');
+    });
+    [].forEach.call(el.strokeChips.children, function (n) {
+      n.className = 'chip sm' + (Number(n.dataset.id) === S.strokeId ? ' on' : '');
+    });
+
+    el.barBox.className = 'sw-box' + (S.bar ? ' on' : '');
+    el.stageEmpty.classList.toggle('hidden', S.sample !== 'none');
+    el.btn.textContent = S.result ? '重新生成' : '生成头像';
+    el.saveBtn.className = 'btn-save' + (S.saved ? ' done' : '');
+    el.saveBtn.textContent = S.saved ? '已存到相册' : '存到相册';
+
+    if (S.plan) {
+      var p = S.plan;
+      el.resultWrap.classList.remove('hidden');
+      el.empty.classList.add('hidden');
+      el.sizeLabel.classList.remove('hidden');
+      el.sizeLabel.textContent = '已生成 ' + p.canvas.w + ' × ' + p.canvas.h;
+      el.resultSize.textContent = p.canvas.w + ' × ' + p.canvas.h;
+      el.resFont.textContent = p.text.font.name;
+      el.resMeta.textContent = p.stats.lines + ' 行 · 字号 ' + p.text.size +
+        ' · 描边 ' + (p.text.outline ? p.text.strokeWidth : '关');
+      var lum = p.stats.bgLum == null ? 0.5 : p.stats.bgLum;
+      el.meterFill.style.width = Math.round(lum * 100) + '%';
+      el.meterFill.className = 'meter-fill';
+      el.meterVal.textContent = lum.toFixed(2) + ' ' + (p.stats.bgKind || '');
+      var cr = p.stats.contrast == null ? 1 : p.stats.contrast;
+      el.crFill.style.width = Math.min(100, Math.round(cr / 21 * 100)) + '%';
+      el.crFill.className = 'meter-fill' + (cr < 3 ? ' low' : '');
+      el.crLabel.textContent = (p.stats.edge || '字') + '对比度';
+      el.crVal.textContent = cr.toFixed(1) + ':1';
+      el.unlock.classList.toggle('hidden', S.unlocked);
+      el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+      el.colorHint.innerHTML = '自动量了文字那块：<b>' + (p.stats.bgKind || '未知') +
+        '</b>，挑对比度最高的色';
+    } else {
+      el.resultWrap.classList.add('hidden');
+      el.empty.classList.remove('hidden');
+      el.sizeLabel.classList.add('hidden');
+    }
+  }
+
+  function boot() {
+    el.sizeChips.innerHTML = Sticker.SIZES.map(function (s) {
+      return '<div class="chip" data-id="' + s.id + '">' + s.name + '</div>';
+    }).join('');
+    el.fontChips.innerHTML = Sticker.FONTS.map(function (f) {
+      return '<div class="chip" data-id="' + f.id + '" style="font-family:' + f.family +
+        ';font-weight:' + f.weight + '">' + f.name + '</div>';
+    }).join('');
+    el.swRow.innerHTML = Sticker.COLORS.map(function (c) {
+      return '<div class="sw" data-v="' + c.value + '" style="background:' + c.value + '"></div>';
+    }).join('') + '<div class="sw sw-auto"><span class="sw-auto-t">自动</span></div>';
+    el.posChips.innerHTML = Sticker.POSITIONS.map(function (p) {
+      return '<div class="chip" data-id="' + p.id + '">' + p.name + '</div>';
+    }).join('');
+    el.strokeChips.innerHTML = Sticker.STROKES.map(function (s) {
+      return '<div class="chip sm" data-id="' + s.id + '">' + s.name + '</div>';
+    }).join('');
+
+    fitStage(4 / 3);
+    render();
+  }
+
+  /* ---------- 动作 ---------- */
+
+  function chooseSample(kind) {
+    S.sample = kind;
+    S.result = false;
+    S.plan = null;
+    S.saved = false;
+    fitStage(4 / 3);
+    paint(null);
+    render();
+    return true;
+  }
+
+  function setText(t) {
+    S.text = String(t == null ? '' : t).slice(0, Sticker.MAX_CHARS);
+    S.result = false;
+    S.plan = null;
+    S.saved = false;
+    render();
+    return true;
+  }
+
+  function generate() {
+    if (S.sample === 'none') { toast('先选一张图'); return false; }
+    var txt = (S.text || '').trim();
+    if (!txt) { toast('先打几个字'); return false; }
+
+    // 第一遍：只排位置，还不知道该配什么色
+    var pre = Sticker.buildPlan(planArgs(null));
+    if (!pre.ok) { toast(pre.message); return false; }
+
+    // 把背景单独画一遍，量文字将要占的那块区域
+    paintBg(pre.canvas.w, pre.canvas.h);
+    var lum = regionLumOf(pre.box, pre.canvas.w, pre.canvas.h);
+
+    // 第二遍：带着亮度重新出计划（自动配色就在这一步定）
+    var plan = Sticker.buildPlan(planArgs(lum));
+    if (!plan.ok) { toast(plan.message); return false; }
+
+    S.plan = plan;
+    S.result = true;
+    S.saved = false;
+    fitStage(plan.canvas.h / plan.canvas.w);
+    render();
+    paint(plan);
+    if (plan.warning) toast(plan.warning);
+    return true;
+  }
+
+  /* ---------- 交互 ---------- */
+
+  el.lightBtn.addEventListener('click', function () {
+    chooseSample(S.sample === 'light' ? 'dark' : 'light');
+    el.lightBtn.textContent = S.sample === 'light' ? '深底图' : '浅底图';
+  });
+  el.strokeChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (!n) return;
+    S.strokeId = Number(n.dataset.id);
+    S.result = false; S.plan = null; S.saved = false; render();
+  });
+  el.sizeChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (!n) return;
+    S.sizeId = n.dataset.id;
+    S.result = false; S.plan = null; S.saved = false; render();
+  });
+  el.fontChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (!n) return;
+    S.fontId = n.dataset.id;
+    S.result = false; S.plan = null; S.saved = false; render();
+  });
+  el.swRow.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.sw') : null;
+    if (!n) return;
+    S.color = n.dataset.v === undefined ? 'auto' : n.dataset.v;
+    S.result = false; S.plan = null; S.saved = false; render();
+  });
+  el.posChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (!n) return;
+    S.posId = n.dataset.id;
+    S.result = false; S.plan = null; S.saved = false; render();
+  });
+  el.barBox.addEventListener('click', function () {
+    S.bar = !S.bar;
+    S.result = false; S.plan = null; S.saved = false; render();
+  });
+  document.getElementById('sampleTextBtn').addEventListener('click', function () { setText('中秋快乐'); });
+  el.clearBtn.addEventListener('click', function () { setText(''); });
+  el.btn.addEventListener('click', generate);
+  el.saveBtn.addEventListener('click', function () {
+    if (!S.plan) { toast('先生成一张'); return; }
+    S.saved = true;
+    render();
+    toast('已存到相册');
+  });
+  el.unlock.addEventListener('click', function () {
+    S.unlocked = true;
+    render();
+    toast('已解锁，不限次数');
+  });
+
+  /* ---------- 截图脚本的控制口 ---------- */
+  window.__ctl = {
+    reset: function () {
+      S.text = '';
+      S.sample = 'none';
+      S.fontId = 'heavy';
+      S.color = 'auto';
+      S.posId = 'bottom';
+      S.sizeId = 'm';
+      S.strokeId = 2;
+      S.bar = false;
+      S.result = false;
+      S.unlocked = false;
+      S.saved = false;
+      S.plan = null;
+      fitStage(4 / 3);
+      cv.width = 900; cv.height = 1200;
+      ctx.clearRect(0, 0, 900, 1200);
+      el.lightBtn.textContent = '浅底图';
+      el.stageEmpty.classList.remove('hidden');
+      el.colorHint.innerHTML = '自动：只量文字那块背景，不量整张图';
+      render();
+      return true;
+    },
+    setSample: chooseSample,
+    setImage: function () { return chooseSample('light'); },
+    setText: setText,
+    setXxx: setText,
+    setFont: function (id) { S.fontId = id; S.result = false; S.plan = null; render(); return true; },
+    setColor: function (v) { S.color = v; S.result = false; S.plan = null; render(); return true; },
+    setPos: function (id) { S.posId = id; S.result = false; S.plan = null; render(); return true; },
+    setSize: function (id) { S.sizeId = id; S.result = false; S.plan = null; render(); return true; },
+    setStroke: function (n) { S.strokeId = Number(n); S.result = false; S.plan = null; render(); return true; },
+    setBar: function (on) { S.bar = !!on; S.result = false; S.plan = null; render(); return true; },
+    generate: generate,
+    unlock: function () { S.unlocked = true; render(); toast('已解锁，不限次数'); return true; },
+    save: function () { S.saved = true; render(); toast('已存到相册'); return true; },
+    copy: function () { S.saved = true; render(); toast('已存到相册'); return true; },
+    toast: toast,
+    hideToast: function () { clearTimeout(toastTimer); el.toast.classList.remove('show'); },
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    focus: function (on) {
+      var c = document.getElementById('caret');
+      if (c) c.className = on ? 'caret on' : 'caret';
+    },
+    state: function () {
+      return {
+        text: S.text, sample: S.sample, fontId: S.fontId, color: S.color,
+        posId: S.posId, sizeId: S.sizeId, strokeId: S.strokeId, bar: S.bar,
+        result: S.result, unlocked: S.unlocked, saved: S.saved, plan: S.plan
+      };
+    }
+  };
+
+  boot();
+})();
+</script>
+</body>
+</html>
