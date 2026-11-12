@@ -1,0 +1,84 @@
+.page { padding: 25rpx 33rpx 62rpx; }
+
+.hero { padding-top: 16rpx; }
+.h1 { font-size: 54rpx; font-weight: 700; letter-spacing: -1rpx; line-height: 1.2; }
+.sub { margin-top: 12rpx; font-size: 27rpx; color: #86868E; line-height: 1.5; }
+
+.stage {
+  margin-top: 33rpx; position: relative; background: #F6F6F8;
+  border-radius: 25rpx; display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.cv { display: block; border-radius: 25rpx; }
+.stage-empty {
+  position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.plus { font-size: 62rpx; color: #C6C6CE; line-height: 1; font-weight: 300; }
+.stage-empty-text { margin-top: 16rpx; font-size: 26rpx; color: #B4B4BC; }
+
+.stage-actions { margin-top: 16rpx; display: flex; justify-content: space-between; }
+.link { font-size: 24rpx; color: #2E5BE6; }
+.link.gray { color: #B4B4BC; }
+
+.section { margin-top: 31rpx; }
+.section-label { font-size: 25rpx; color: #86868E; margin-bottom: 16rpx; }
+.hint { margin-top: 12rpx; font-size: 23rpx; color: #B4B4BC; line-height: 1.5; }
+.chips { display: flex; flex-wrap: wrap; }
+.chip {
+  margin: 0 14rpx 14rpx 0; padding: 14rpx 31rpx; border-radius: 999rpx;
+  border: 1rpx solid #E6E6EA; font-size: 27rpx; color: #3A3A42; line-height: 1.2;
+}
+.chip.on { background: #101014; border-color: #101014; color: #FFFFFF; }
+.chip.sm { padding: 12rpx 27rpx; font-size: 25rpx; }
+
+.btn-primary {
+  margin-top: 31rpx; height: 104rpx; border-radius: 23rpx; background: #2E5BE6;
+  color: #FFFFFF; font-size: 32rpx; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-primary.dim { opacity: 0.55; }
+
+.result-head { margin-top: 40rpx; display: flex; justify-content: space-between; align-items: baseline; }
+.result-title { font-size: 27rpx; color: #86868E; }
+.result-count { font-size: 24rpx; color: #B4B4BC; }
+.meta-row { margin-top: 16rpx; padding-bottom: 21rpx; border-bottom: 1rpx solid #F1F1F4; }
+.len { font-size: 21rpx; color: #C6C6CE; }
+
+/* 九格结果板 */
+.board { margin-top: 27rpx; display: flex; flex-wrap: wrap; }
+.cell {
+  position: relative; background: #FFFFFF; margin: 0 14rpx 14rpx 0;
+  box-shadow: 0 2rpx 8rpx rgba(16, 16, 20, 0.13); border-radius: 4rpx; overflow: hidden;
+}
+.cell-img { display: block; }
+.cell-no {
+  position: absolute; left: 8rpx; top: 8rpx; min-width: 30rpx; height: 30rpx;
+  border-radius: 8rpx; background: rgba(16, 16, 20, 0.62); color: #FFFFFF;
+  font-size: 19rpx; line-height: 30rpx; text-align: center; padding: 0 6rpx;
+}
+.board-cap { margin-top: 19rpx; font-size: 23rpx; color: #B4B4BC; }
+
+.btn-save {
+  margin-top: 29rpx; height: 100rpx; border-radius: 23rpx; border: 1rpx solid #101014;
+  color: #101014; font-size: 30rpx; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-save.done { border-color: #C6C6CE; color: #B4B4BC; }
+
+.unlock { margin-top: 31rpx; background: #EEF2FF; border-radius: 23rpx; padding: 27rpx 29rpx; }
+.unlock-main { font-size: 30rpx; font-weight: 600; color: #2E5BE6; }
+.unlock-sub { margin-top: 8rpx; font-size: 24rpx; color: #6E82BF; }
+.unlocked-tip { margin-top: 31rpx; font-size: 24rpx; color: #B4B4BC; text-align: center; }
+
+.empty { margin-top: 60rpx; display: flex; flex-direction: column; align-items: center; }
+.empty-line { width: 58rpx; height: 1rpx; background: #E6E6EA; }
+.empty-text { margin-top: 23rpx; font-size: 25rpx; color: #C6C6CE; }
+
+.footer { margin-top: 52rpx; text-align: center; font-size: 22rpx; color: #C6C6CE; }
+
+/* 导出用画布：留在渲染树里但看不见，canvas 2d 必须有尺寸才能导出 */
+.cut-canvas {
+  position: fixed; left: -2000px; top: 0;
+  width: 300px; height: 300px;
+}

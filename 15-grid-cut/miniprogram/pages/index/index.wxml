@@ -1,0 +1,87 @@
+<view class="page">
+
+  <view class="hero">
+    <view class="h1">图片九宫格切图</view>
+    <view class="sub">一张整图切成九张方图，顺序按行排好</view>
+  </view>
+
+  <view class="stage" style="height:{{stageH}}px">
+    <canvas type="2d" id="cv" class="cv" style="width:{{stageW}}px;height:{{stageH}}px"></canvas>
+    <view class="stage-empty" wx:if="{{!hasImage}}" bindtap="onPick">
+      <view class="plus">＋</view>
+      <view class="stage-empty-text">选一张图片</view>
+    </view>
+  </view>
+
+  <view class="stage-actions">
+    <text class="link" bindtap="onPick">换一张</text>
+    <text class="link" bindtap="onSample">用示例图</text>
+    <text class="link gray" wx:if="{{hasImage}}">{{imgW}} × {{imgH}}</text>
+  </view>
+
+  <view class="section">
+    <view class="section-label">切法</view>
+    <view class="chips">
+      <view wx:for="{{grids}}" wx:key="id"
+        class="chip {{gridId === item.id ? 'on' : ''}}"
+        data-id="{{item.id}}" bindtap="onGrid">{{item.name}}</view>
+    </view>
+    <view class="hint">{{gridDesc}}</view>
+  </view>
+
+  <view class="section">
+    <view class="section-label">白边</view>
+    <view class="chips">
+      <view wx:for="{{pads}}" wx:key="id"
+        class="chip sm {{padId === item.id ? 'on' : ''}}"
+        data-id="{{item.id}}" bindtap="onPad">{{item.name}}</view>
+    </view>
+    <view class="hint">{{padDesc}}</view>
+  </view>
+
+  <view class="btn-primary {{cutting ? 'dim' : ''}}" bindtap="onGenerate">
+    {{cutting ? '切图中…' : (result ? '重新切' : '切成九张')}}
+  </view>
+
+  <block wx:if="{{result}}">
+    <view class="result-head">
+      <text class="result-title">切好了</text>
+      <text class="result-count">{{summary}}</text>
+    </view>
+
+    <view class="meta-row">
+      <text class="len">{{metaText}}</text>
+    </view>
+
+    <view class="board">
+      <view class="cell" wx:for="{{files}}" wx:key="i" style="width:{{cellPx}}px;height:{{cellPx}}px">
+        <image class="cell-img" src="{{item.path}}" mode="aspectFill"
+               style="width:{{cellPx}}px;height:{{cellPx}}px"></image>
+        <view class="cell-no">{{item.i + 1}}</view>
+      </view>
+    </view>
+    <view class="board-cap">按行排：左上第 1 张，右下最后一张</view>
+
+    <view class="btn-save {{saved ? 'done' : ''}}" bindtap="onSave">
+      {{saved ? '已保存到相册' : '保存全部'}}
+    </view>
+
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="onUnlock">
+      <view class="unlock-main">解锁不限次</view>
+      <view class="unlock-sub">免费 2 次之后，看一段激励视频即可无限切</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，不限次数</view>
+  </block>
+
+  <view class="empty" wx:else>
+    <view class="empty-line"></view>
+    <view class="empty-text">选图 → 选切法 → 保存九张</view>
+  </view>
+
+  <ad wx:if="{{adUnitId}}" unit-id="{{adUnitId}}" ad-type="banner" ad-theme="white"></ad>
+
+  <view class="footer">图片只在本机处理，不上传</view>
+
+  <!-- 导出用的离屏画布，页面上看不见 -->
+  <canvas type="2d" id="cut" class="cut-canvas"></canvas>
+</view>
