@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>日期差与工作日 · 界面预览</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body {
+    background: #FFFFFF;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: #101014;
+  }
+  /* 底部垫 110px：结果+倒推卡装不下一屏，滚到底时才有余量把倒推卡顶到字幕上方 */
+  body { width: 390px; overflow-x: hidden; padding-bottom: 110px; }
+
+  .page { padding: 12.5px 16.6px 31px; }
+
+  .hero { padding-top: 8.3px; }
+  .h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.2; }
+  .sub { margin-top: 6.2px; font-size: 13.5px; color: #86868E; line-height: 1.5; }
+
+  /* 日期输入卡 */
+  .card {
+    margin-top: 16.6px; background: #F7F7F9; border-radius: 12.5px; padding: 12.5px 13.5px 10.4px;
+  }
+  .row2 { display: flex; }
+  .field { flex: 1; }
+  .field + .field { margin-left: 12px; padding-left: 12px; border-left: 1px solid #E6E6EA; }
+  .flabel { font-size: 11px; color: #9C9CA4; letter-spacing: 0.3px; }
+  .finput {
+    margin-top: 5.2px; font-size: 18px; font-weight: 600; letter-spacing: -0.2px;
+    line-height: 1.3; border: none; background: transparent; width: 100%;
+    font-family: inherit; color: #101014; outline: none; padding: 0;
+  }
+  .finput::placeholder { color: #C6C6CE; font-weight: 400; }
+  .fweek { margin-top: 2px; font-size: 11px; color: #86868E; }
+  .quick { margin-top: 11px; display: flex; align-items: center; }
+  .link { font-size: 12px; color: #2E5BE6; }
+  .link + .link { margin-left: 14px; }
+  .link.gray { color: #B4B4BC; margin-left: auto; }
+
+  .section { margin-top: 18px; }
+  .section-label { font-size: 12.5px; color: #86868E; margin-bottom: 8.3px; }
+  .hint { margin-top: 6.2px; font-size: 11.5px; color: #B4B4BC; line-height: 1.5; }
+  .chips { display: flex; flex-wrap: wrap; }
+  .chip {
+    margin: 0 7.3px 7.3px 0; padding: 7.3px 15.6px; border-radius: 999px;
+    border: 1px solid #E6E6EA; font-size: 13.5px; color: #3A3A42; line-height: 1.2;
+  }
+  .chip.on { background: #101014; border-color: #101014; color: #FFFFFF; }
+  .chip.sm { padding: 6.2px 13.5px; font-size: 12.5px; }
+
+  .btn-primary {
+    margin-top: 22px; height: 52px; border-radius: 11.5px; background: #2E5BE6;
+    color: #FFFFFF; font-size: 16.1px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; letter-spacing: 0.5px;
+  }
+
+  /* 结果 */
+  .result-head { margin-top: 24px; display: flex; justify-content: space-between; align-items: baseline; }
+  .result-title { font-size: 13.5px; color: #86868E; }
+  .bignum { margin-top: 2px; display: flex; align-items: baseline; }
+  .num { font-size: 78px; font-weight: 700; letter-spacing: -2.5px; line-height: 1.05; }
+  .unit { margin-left: 6px; font-size: 24px; font-weight: 600; color: #3A3A42; }
+  .num.neg { color: #D63A2E; }
+
+  .meta-row { margin-top: 8.3px; display: flex; flex-wrap: wrap; }
+  .tag {
+    font-size: 10.4px; color: #5A5A62; background: #F2F2F5;
+    border-radius: 4px; padding: 3px 7px; margin: 0 6px 6px 0;
+  }
+
+  .rows { margin-top: 46px; border-top: 1px solid #F1F1F4; }
+  /* 「明细」小标题 + 上边距：给字幕那条 1620–1700 的横带留出干净的空隙，
+     否则 y=1660 的 64px 字幕会正好压在「精确跨度」这一行上 */
+  .detail-label { margin-top: 14px; font-size: 11.5px; color: #A0A0A8; letter-spacing: 0.4px; }
+  .row {
+    padding: 9.4px 0; border-bottom: 1px solid #F1F1F4;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .rk { font-size: 12.5px; color: #86868E; }
+  .rv { font-size: 14px; color: #101014; font-weight: 500; }
+  .rv.mut { color: #3A3A42; font-weight: 400; }
+
+  /* 倒推卡 */
+  .rev { margin-top: 40px; background: #F7F7F9; border-radius: 12.5px; padding: 13.5px 13.5px 14.5px; }
+  .rev-title { font-size: 12.5px; color: #86868E; }
+  .rev-out { margin-top: 10.4px; font-size: 15px; font-weight: 600; line-height: 1.45; }
+  .rev-out em { font-style: normal; color: #2E5BE6; }
+  .rev-note { margin-top: 4.2px; font-size: 11px; color: #B4B4BC; }
+
+  .btn-copy {
+    margin-top: 16.6px; height: 50px; border-radius: 11.5px; border: 1px solid #E6E6EA;
+    color: #3A3A42; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .unlock { margin-top: 26px; background: #EEF2FF; border-radius: 11.5px; padding: 13.5px 14.5px; }
+  .unlock-main { font-size: 15px; font-weight: 600; color: #2E5BE6; }
+  .unlock-sub { margin-top: 4.2px; font-size: 12px; color: #6E82BF; }
+  .unlocked-tip { margin-top: 15.6px; font-size: 12px; color: #B4B4BC; text-align: center; }
+
+  .empty { margin-top: 34px; display: flex; flex-direction: column; align-items: center; }
+  .empty-line { width: 29px; height: 1px; background: #E6E6EA; }
+  .empty-text { margin-top: 11.5px; font-size: 12.5px; color: #C6C6CE; }
+
+  .footer { margin-top: 26px; text-align: center; font-size: 11px; color: #C6C6CE; }
+
+  .toast {
+    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: rgba(16,16,20,0.86); color: #fff; font-size: 13.5px;
+    padding: 10px 18px; border-radius: 8px; opacity: 0; pointer-events: none;
+    white-space: nowrap; z-index: 99; max-width: 320px; line-height: 1.4;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="h1">日期差计算</div>
+    <div class="sub">差几天、扣掉周末、还剩几个工作日</div>
+  </div>
+
+  <div class="card">
+    <div class="row2">
+      <div class="field">
+        <div class="flabel">起始</div>
+        <input class="finput" id="inStart" value="2026-11-13" placeholder="2026-11-13" />
+        <div class="fweek" id="weekStart">周五</div>
+      </div>
+      <div class="field">
+        <div class="flabel">结束</div>
+        <input class="finput" id="inEnd" value="2026-12-31" placeholder="2026-12-31" />
+        <div class="fweek" id="weekEnd">周四</div>
+      </div>
+    </div>
+    <div class="quick">
+      <span class="link" id="todayBtn">都用今天</span>
+      <span class="link" id="monthBtn">到月底</span>
+      <span class="link gray" id="rangeHint">—</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">算哪种</div>
+    <div class="chips" id="modeChips"></div>
+    <div class="hint" id="modeHint">含起止两天，周末按周六周日扣</div>
+  </div>
+
+  <div class="btn-primary" id="btn">算一下</div>
+
+  <div id="resultWrap" class="hidden">
+    <div class="result-head">
+      <span class="result-title" id="resTitle">自然日</span>
+      <span class="link" id="againBtn">重算</span>
+    </div>
+    <div class="bignum"><span class="num" id="bigNum">0</span><span class="unit">天</span></div>
+    <div class="meta-row" id="tags"></div>
+    <div class="detail-label">明细</div>
+    <div class="rows" id="rows"></div>
+
+    <div class="rev" id="rev">
+      <div class="rev-title">从起始日往后数工作日</div>
+      <div class="chips" id="revChips"></div>
+      <div class="rev-out" id="revOut">—</div>
+      <div class="rev-note" id="revNote">顺延周末，不含起始日当天</div>
+    </div>
+
+    <div class="unlock" id="unlock">
+      <div class="unlock-main">解锁不限次</div>
+      <div class="unlock-sub">免费 2 次之后，看一段激励视频即可无限算</div>
+    </div>
+    <div class="unlocked-tip hidden" id="unlockedTip">已解锁，不限次数</div>
+    <div class="btn-copy" id="copyBtn">复制这行结果</div>
+  </div>
+
+  <div class="empty" id="empty">
+    <div class="empty-line"></div>
+    <div class="empty-text">填两个日期 → 选算法 → 算一下</div>
+  </div>
+
+  <div class="footer">数据在本地算，不上传</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../miniprogram/core/datecalc.js"></script>
+<script>
+(function () {
+  var S = {
+    start: '2026-11-13',
+    end: '2026-12-31',
+    mode: 'natural',
+    result: null,
+    unlocked: false,
+    revN: 30,
+    revIdx: 0,
+    quota: 2,
+    used: 0
+  };
+
+  var el = {
+    inStart: document.getElementById('inStart'),
+    inEnd: document.getElementById('inEnd'),
+    weekStart: document.getElementById('weekStart'),
+    weekEnd: document.getElementById('weekEnd'),
+    rangeHint: document.getElementById('rangeHint'),
+    modeChips: document.getElementById('modeChips'),
+    modeHint: document.getElementById('modeHint'),
+    btn: document.getElementById('btn'),
+    resultWrap: document.getElementById('resultWrap'),
+    resTitle: document.getElementById('resTitle'),
+    bigNum: document.getElementById('bigNum'),
+    tags: document.getElementById('tags'),
+    rows: document.getElementById('rows'),
+    rev: document.getElementById('rev'),
+    revChips: document.getElementById('revChips'),
+    revOut: document.getElementById('revOut'),
+    revNote: document.getElementById('revNote'),
+    copyBtn: document.getElementById('copyBtn'),
+    unlock: document.getElementById('unlock'),
+    unlockedTip: document.getElementById('unlockedTip'),
+    empty: document.getElementById('empty'),
+    toast: document.getElementById('toast')
+  };
+
+  var MODES = [
+    { id: 'natural', name: '自然日' },
+    { id: 'work', name: '工作日' }
+  ];
+
+  var toastTimer = null;
+  function toast(t) {
+    el.toast.textContent = t;
+    el.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+
+  function weekOf(key) {
+    var p = DateCalc.parseDate(key);
+    return p.ok ? p.weekdayName : '日期不对';
+  }
+
+  function render() {
+    el.inStart.value = S.start;
+    el.inEnd.value = S.end;
+    el.weekStart.textContent = weekOf(S.start);
+    el.weekEnd.textContent = weekOf(S.end);
+
+    var a = DateCalc.parseDate(S.start), b = DateCalc.parseDate(S.end);
+    el.rangeHint.textContent = (a.ok && b.ok) ? (Math.abs(b.idx - a.idx) + 1) + ' 天区间' : '—';
+
+    [].forEach.call(el.modeChips.children, function (n) {
+      n.className = 'chip' + (n.dataset.id === S.mode ? ' on' : '');
+    });
+    el.modeHint.textContent = S.mode === 'work'
+      ? '含起止两天，扣掉周六周日'
+      : '含起止两天，周末也一起数';
+
+    if (S.result && S.result.ok) {
+      var r = S.result;
+      el.resultWrap.classList.remove('hidden');
+      el.empty.classList.add('hidden');
+
+      var big = S.mode === 'work' ? r.workdays : r.absDays;
+      el.resTitle.textContent = S.mode === 'work' ? '工作日' : '自然日';
+      el.bigNum.textContent = big;
+      el.bigNum.className = 'num';
+
+      // 精确跨度放标签行：首屏（scroll=0）就能看见，不用往下滚
+      el.tags.innerHTML = [
+        '含首尾 ' + r.totalDays + ' 天',
+        '周末 ' + r.weekendDays + ' 天',
+        r.ymdText
+      ].map(function (t) { return '<span class="tag">' + t + '</span>'; }).join('');
+
+      var rr = [
+        ['从起始到结束', r.absDays + ' 天'],
+        ['折合', r.weeks + ' 周零 ' + r.restDays + ' 天'],
+        ['起始日', DateCalc.fmtCN(r.start.key)],
+        ['结束日', DateCalc.fmtCN(r.end.key)]
+      ];
+      el.rows.innerHTML = rr.map(function (x) {
+        return '<div class="row"><span class="rk">' + x[0] + '</span><span class="rv">' + x[1] + '</span></div>';
+      }).join('');
+
+      el.revChips.innerHTML = DateCalc.PRESETS.map(function (p) {
+        return '<div class="chip sm' + (p.n === S.revN ? ' on' : '') + '" data-n="' + p.n + '">' + p.name + '</div>';
+      }).join('');
+
+      var t = DateCalc.addWorkdays(r.start.key, S.revN);
+      el.revOut.innerHTML = t.ok
+        ? '第 <em>' + S.revN + '</em> 个工作日 = <em>' + t.text + '</em>'
+        : '算不出来：' + t.message;
+      el.revNote.textContent = '从 ' + DateCalc.fmtCN(r.start.key) + ' 起算，不含起始日当天';
+
+      el.unlock.classList.toggle('hidden', S.unlocked);
+      el.unlockedTip.classList.toggle('hidden', !S.unlocked);
+    } else {
+      el.resultWrap.classList.add('hidden');
+      // 空态提示只在两个日期没填全时出现：填好了还挂着「填两个日期」会显得没反应
+      el.empty.classList.toggle('hidden', !!(a.ok && b.ok));
+    }
+  }
+
+  function compute() {
+    var r = DateCalc.analyze({ start: S.start, end: S.end });
+    if (!r.ok) {
+      S.result = null;
+      render();
+      toast(r.message);
+      return false;
+    }
+    S.result = r;
+    S.used++;
+    render();
+    return true;
+  }
+
+  /* ---------- 控制 ---------- */
+  function setStart(v) {
+    if (v === null || v === undefined) return false;
+    S.start = String(v);
+    S.result = null;
+    render();
+    return true;
+  }
+  function setEnd(v) {
+    if (v === null || v === undefined) return false;
+    S.end = String(v);
+    S.result = null;
+    render();
+    return true;
+  }
+  function setMode(id) {
+    S.mode = id === 'work' ? 'work' : 'natural';
+    render();
+    return true;
+  }
+  function setRevN(n) {
+    S.revN = Number(n) || 30;
+    render();
+    return true;
+  }
+  function reset() {
+    S.start = '2026-11-13';
+    S.end = '2026-12-31';
+    S.mode = 'natural';
+    S.result = null;
+    S.unlocked = false;
+    S.revN = 30;
+    S.used = 0;
+    render();
+    return true;
+  }
+
+  /* ---------- 交互 ---------- */
+  el.inStart.addEventListener('input', function () { S.start = el.inStart.value; S.result = null; render(); });
+  el.inEnd.addEventListener('input', function () { S.end = el.inEnd.value; S.result = null; render(); });
+  el.modeChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (n) setMode(n.dataset.id);
+  });
+  el.revChips.addEventListener('click', function (e) {
+    var n = e.target.closest ? e.target.closest('.chip') : null;
+    if (n) setRevN(n.dataset.n);
+  });
+  el.btn.addEventListener('click', compute);
+  document.getElementById('againBtn').addEventListener('click', compute);
+  document.getElementById('todayBtn').addEventListener('click', function () {
+    S.start = '2026-11-13'; S.end = '2026-11-13'; S.result = null; render();
+  });
+  document.getElementById('monthBtn').addEventListener('click', function () {
+    S.start = '2026-11-13'; S.end = '2026-11-30'; S.result = null; render();
+  });
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    if (!S.result) { toast('先算一次'); return; }
+    var r = S.result;
+    el.copyBtn.textContent = '已复制';
+    toast('已复制：' + r.absDays + ' 天');
+  });
+  el.unlock.addEventListener('click', function () {
+    S.unlocked = true;
+    render();
+    toast('已解锁，不限次数');
+  });
+
+  el.modeChips.innerHTML = MODES.map(function (m) {
+    return '<div class="chip" data-id="' + m.id + '">' + m.name + '</div>';
+  }).join('');
+
+  /* ---------- 截图脚本控制口 ---------- */
+  window.__ctl = {
+    reset: reset,
+    setStart: setStart,
+    setEnd: setEnd,
+    setMode: setMode,
+    setXxx: setMode,
+    setRevN: setRevN,
+    generate: compute,
+    unlock: function () { S.unlocked = true; render(); toast('已解锁，不限次数'); return true; },
+    lock: function () { S.unlocked = false; render(); return true; },
+    copy: function () { S.copied = true; return true; },
+    toast: toast,
+    hideToast: function () { clearTimeout(toastTimer); el.toast.classList.remove('show'); },
+    scrollTo: function (y) { window.scrollTo(0, y); },
+    scrollTop: function () { window.scrollTo(0, 0); },
+    state: function () {
+      return {
+        start: S.start, end: S.end, mode: S.mode,
+        result: S.result, unlocked: S.unlocked, revN: S.revN,
+        page: document.body.scrollHeight
+      };
+    },
+    measure: function () {
+      var q = function (s) { return document.querySelector(s); };
+      var px = function (e) { return e ? Math.round((e.getBoundingClientRect().top + window.scrollY) * 2.7692) : -1; };
+      var pb = function (e) { return e ? Math.round((e.getBoundingClientRect().bottom + window.scrollY) * 2.7692) : -1; };
+      return {
+        page: Math.round(document.body.scrollHeight * 2.7692),
+        card: px(q('.card')), cardBot: pb(q('.card')),
+        modes: px(q('#modeChips')), btn: px(q('#btn')), btnBot: pb(q('#btn')),
+        head: px(q('.result-head')), big: px(q('.bignum')), bigBot: pb(q('.bignum')),
+        tags: px(q('#tags')), rows: px(q('#rows')), rowsBot: pb(q('#rows')),
+        rev: px(q('#rev')), revBot: pb(q('#rev')),
+        unlock: px(q('#unlock')), unlockBot: pb(q('#unlock')),
+        copy: px(q('#copyBtn')), copyBot: pb(q('#copyBtn')), empty: px(q('#empty'))
+      };
+    }
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>

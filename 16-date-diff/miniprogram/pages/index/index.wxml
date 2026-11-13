@@ -1,0 +1,90 @@
+<view class="page">
+
+  <view class="hero">
+    <view class="h1">日期差计算</view>
+    <view class="sub">差几天、扣掉周末、还剩几个工作日</view>
+  </view>
+
+  <view class="card">
+    <view class="row2">
+      <view class="field">
+        <view class="flabel">起始</view>
+        <input class="finput" value="{{start}}" data-k="start" bindinput="onInput"
+               placeholder="2026-11-13" placeholder-class="ph" maxlength="24" />
+        <view class="fweek">{{startWeek}}</view>
+      </view>
+      <view class="field">
+        <view class="flabel">结束</view>
+        <input class="finput" value="{{end}}" data-k="end" bindinput="onInput"
+               placeholder="2026-12-31" placeholder-class="ph" maxlength="24" />
+        <view class="fweek">{{endWeek}}</view>
+      </view>
+    </view>
+    <view class="quick">
+      <text class="link" bindtap="useToday">都用今天</text>
+      <text class="link" bindtap="useMonthEnd">到月底</text>
+      <text class="link gray">{{rangeHint}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-label">算哪种</view>
+    <view class="chips">
+      <view class="chip {{mode == 'natural' ? 'on' : ''}}" data-id="natural" bindtap="setMode">自然日</view>
+      <view class="chip {{mode == 'work' ? 'on' : ''}}" data-id="work" bindtap="setMode">工作日</view>
+    </view>
+    <view class="hint">{{modeHint}}</view>
+  </view>
+
+  <view class="btn-primary" bindtap="compute">算一下</view>
+
+  <block wx:if="{{result}}">
+    <view class="result-head">
+      <text class="result-title">{{resTitle}}</text>
+      <text class="link" bindtap="compute">重算</text>
+    </view>
+
+    <view class="bignum">
+      <text class="num">{{bigNum}}</text>
+      <text class="unit">天</text>
+    </view>
+
+    <view class="meta-row">
+      <text class="tag" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
+    </view>
+
+    <view class="detail-label">明细</view>
+    <view class="rows">
+      <view class="row" wx:for="{{rows}}" wx:key="k">
+        <text class="rk">{{item.k}}</text>
+        <text class="rv">{{item.v}}</text>
+      </view>
+    </view>
+
+    <view class="rev">
+      <view class="rev-title">从起始日往后数工作日</view>
+      <view class="chips">
+        <view class="chip sm {{revN == item.n ? 'on' : ''}}"
+              wx:for="{{revPresets}}" wx:key="id" data-n="{{item.n}}" bindtap="pickRev">{{item.name}}</view>
+      </view>
+      <view class="rev-out">{{revOut}}</view>
+      <view class="rev-note">{{revNote}}</view>
+    </view>
+
+    <view class="unlock" wx:if="{{!unlocked}}" bindtap="unlock">
+      <view class="unlock-main">解锁不限次</view>
+      <view class="unlock-sub">免费 2 次之后，看一段激励视频即可无限算</view>
+    </view>
+    <view class="unlocked-tip" wx:else>已解锁，不限次数</view>
+
+    <view class="copy" bindtap="copyResult">复制这行结果</view>
+  </block>
+
+  <view class="empty" wx:if="{{showEmpty}}">
+    <view class="empty-line"></view>
+    <view class="empty-text">填两个日期 → 选算法 → 算一下</view>
+  </view>
+
+  <view class="footer">数据在本地算，不上传</view>
+
+</view>
